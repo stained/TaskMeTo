@@ -179,7 +179,7 @@ class User extends Root
         $loginToken = uniqid('u', true);
         $user->setLoginToken($loginToken)->update();
 
-        $f3->set('COOKIE.user_token', $loginToken);
+        $f3->set('COOKIE.user_token', $loginToken, 60 * 60 * 24 * 30);
 
         $returnPath = $f3->get('REQUEST.returnpath');
 
