@@ -1,0 +1,26 @@
+<div class="sub_nav_bar">
+    <check if="{{ @user }}">
+        <false><a href="/user/signin?returnpath=/tasks">Sign in</a> to create new, or view existing tasks.</false>
+        <true>
+            <a href="/task/create">Create New Task</a> | <a href="/tasks/view">View Your Tasks</a>
+        </true>
+    </check>
+</div>
+
+<h1>Open Tasks</h1>
+<check if="{{ @openTasks }}">
+    <false>
+        <p>
+        There are no opens tasks at present.
+        </p>
+        <check if="{{ @user }}">
+            <false><a href="/user/signin?returnpath=/tasks">Sign in</a> to create a new task.</false>
+            <true>
+                <a href="/task/create">Create</a> a new task.
+            </true>
+        </check>
+    </false>
+    <true>
+        Open tasks go here.
+    </true>
+</check>

@@ -1,0 +1,30 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/site.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/">TaskMeTo</a>
+    </div>
+
+    <div class="nav_bar">
+        <include href="nav.htm" />
+    </div>
+
+    <div class="content">
+        <check if="{{ @error }}">
+            <div class="error">
+                {{ @error }}
+            </div>
+        </check>
+
+        <check if="{{ @message }}">
+            <div class="message">
+                {{ @message }}
+            </div>
+        </check>
+
+        <include href="{{ @content }}" />
+    </div>
+</body>
+</html>

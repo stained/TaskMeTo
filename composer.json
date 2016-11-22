@@ -1,0 +1,12 @@
+{
+	"name": "TaskMeTo",
+	"description": "A task manager",
+	"homepage": "http://taskmeto.com/",
+	"license": "Custom",
+	"require": {
+		"php": ">=5.3.6"
+	},
+	"autoload": {
+		"files": ["lib/base.php"]
+	}
+}
