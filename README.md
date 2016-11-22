@@ -18,3 +18,40 @@ Quickstart guide
 
 Building the Vagrant box might take a while.
 
+General Code Layout
+-------------------
+All custom code + configs
+/app
+
+Config files
+/app/config
+
+The flow + business logic controllers
+/app/controller
+
+Database models
+/app/model
+
+Entry (index.php) + css, javascript, and image files
+/app/public
+
+Util classes
+/app/util
+
+Front-end templates. Each folder roughly corresponds to the appropriate controller class (user, task, root).
+See https://fatfreeframework.com/views-and-templates for more info about templates (and F3's templating language).
+/app/view
+
+Default html file that gets loaded
+/app/view/default.htm
+
+--
+
+Vagrant and db deploy scripts
+/deploy
+
+--
+
+Core FatFreeFramework
+/lib
+
