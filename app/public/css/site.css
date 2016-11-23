@@ -89,8 +89,8 @@ table {
     width: 100%;
 }
 
-tr:nth-child(even) {background: #CCC}
-tr:nth-child(odd) {background: #FFF}
+tr:nth-child(even) {background: #cccac1}
+tr:nth-child(odd) {background: #eeece4}
 
 td {
     padding: 5px;
