@@ -89,8 +89,23 @@ class Root
         $web = \Web::instance();
 
         $files = $web->receive(function($file, $formFieldName){
+            // TODO move out into more generic location
             $allowedTypes = array(
-                'image/png', 'image/jpeg', 'image/x-png', 'image/jpg', 'application/pdf'
+                // images
+                'image/png',
+                'image/jpeg',
+                'image/x-png',
+                'image/jpg',
+                // documents
+                'application/pdf',
+                // archives
+                'application/x-7z-compressed',
+                'application/x-rar-compressed',
+                'application/zip',
+                'application/x-gtar',
+                'application/x-compressed',
+                'application/x-gzip',
+                'application/x-bzip2'
             );
 
             if (!in_array($file['type'], $allowedTypes)) {

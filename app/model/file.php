@@ -152,6 +152,18 @@ class File extends Root
                $this->mimeType == 'image/jpg';
     }
 
+    public function isArchive()
+    {
+        return $this->mimeType == 'application/x-7z-compressed' ||
+               $this->mimeType == 'application/x-rar-compressed' ||
+               $this->mimeType == 'application/zip' ||
+               $this->mimeType == 'application/x-gtar' ||
+               $this->mimeType == 'application/x-compressed' ||
+               $this->mimeType == 'application/x-gzip' ||
+               $this->mimeType == 'application/x-bzip2';
+
+    }
+
     /**
      * @return bool
      */
