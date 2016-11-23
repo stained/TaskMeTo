@@ -43,7 +43,7 @@ class User extends Root
             }
 
             $f3->set('isOwner', false);
-            $createdTasks = Task::getCreatedAndOpenForUser($user);
+            $createdTasks = Task::getCreatedAndPublishedForUser($user);
         }
 
         $currentTasks = UserTask::getCurrentForUser($user);

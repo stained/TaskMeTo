@@ -263,7 +263,7 @@ class Task extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `deleted` = 0',
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `deleted` = 0 ORDER BY `id` DESC',
             array(':userId'=>$user->getId()));
 
         return self::populateMany($result);
@@ -273,16 +273,14 @@ class Task extends Root
      * @param User $user
      * @return Task|null
      */
-    public static function getCreatedAndOpenForUser($user)
+    public static function getCreatedAndPublishedForUser($user)
     {
         $mysql = MySql::instance();
 
-        $now = time();
         $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `published` = 1 ' .
-                                'AND `deadlineTimestamp` > :now AND `deleted` = 0 ORDER BY `id` DESC',
+                                'AND `deleted` = 0 ORDER BY `id` DESC',
             array(
-                ':userId'=>$user->getId(),
-                ':now'=>$now
+                ':userId'=>$user->getId()
             )
         );
 
