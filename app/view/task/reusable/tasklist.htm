@@ -4,6 +4,9 @@
             Title
         </th>
         <th>
+            Tags
+        </th>
+        <th>
             Deadline
         </th>
         <th>
@@ -15,6 +18,11 @@
         <tr>
             <td>
                 <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
+            </td>
+            <td class="align_left_fit">
+                <repeat group="{{ @task->getTags() }}" key="{{ @key }}" value="{{ @tag }}">
+                    <a href="/tasks?tag={{ @tag->getTag() }}">{{ @tag->getTag() }}</a>&nbsp;
+                </repeat>
             </td>
             <td class="align_left_fit">
                 {{ @task->getFormattedDeadline() }}

@@ -138,8 +138,8 @@ class Task extends Root
             $nav = array('Home'=>'/', 'Viewing ' . $task->getTitle()=>'');
         }
 
-        $f3->set('tags', TaskTag::getAllForTask($task));
-        $f3->set('files', TaskFile::getAllForTask($task));
+        $f3->set('tags', $task->getTags());
+        $f3->set('files', $task->getFiles());
 
         static::render($f3, 'task/view', array('nav'=>$nav));
     }

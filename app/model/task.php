@@ -47,6 +47,22 @@ class Task extends Root
     protected $published = false;
 
     /**
+     * @return TaskTag
+     */
+    public function getTags()
+    {
+        return TaskTag::getAllForTask($this);
+    }
+
+    /**
+     * @return TaskFile
+     */
+    public function getFiles()
+    {
+        return TaskFile::getAllForTask($this);
+    }
+
+    /**
      * @return bool
      */
     public function isPublished()
