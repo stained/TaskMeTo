@@ -77,6 +77,8 @@ input[type=text], input[type=password] {
 span.hint {
     font-size: 0.75em;
     font-style: italic;
+    display: inline-block;
+    margin-top: 5px;
 }
 
 span.required {
@@ -135,4 +137,13 @@ div.deadline_not_passed_indicator {
 div.code {
     background: #cccac1;
     padding: 10px;
+}
+
+div.sub_header {
+    font-size: 0.5em;
+    font-weight: normal;
+}
+
+label {
+    display: block;
 }

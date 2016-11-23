@@ -13,8 +13,10 @@
     </div>
 </check>
 
-<h1>{{ @task->getTitle() }}</h1>
-<h4>Created by <a href="/user/profile/{{ @task->getCreatedByUser()->getUsername() }}">{{ @task->getCreatedByUser()->getUsername() }}</a></h4>
+<h1>{{ @task->getTitle() }}
+    <div class="sub_header">Created by <a href="/user/profile/{{ @task->getCreatedByUser()->getUsername() }}">{{ @task->getCreatedByUser()->getUsername() }}</a></div>
+</h1>
+
 
 <h2>Instructions</h2>
 

@@ -7,10 +7,11 @@
     </check>
 </div>
 
-<h1>Open Tasks</h1>
-<check if="{{ @REQUEST.tag }}">
-    <h4>tagged <a href="/tasks?tag={{ @REQUEST.tag }}">{{ @REQUEST.tag }}</a></h4>
-</check>
+<h1>Open Tasks
+    <check if="{{ @REQUEST.tag }}">
+        <div class="sub_header">tagged <a href="/tasks?tag={{ @REQUEST.tag }}">{{ @REQUEST.tag }}</a></div>
+    </check>
+</h1>
 
 <check if="{{ @tasks }}">
     <false>

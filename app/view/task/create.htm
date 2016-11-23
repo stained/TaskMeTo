@@ -4,35 +4,37 @@
 
 <h1>Create a new task</h1>
 
-<form method="POST" action="/task/create">
-    <p>
-        <label for="title">Title: <span class="required">*</span></label><br /><input type="text" id="title" name="title" value="{{ @POST.title }}" placeholder="e.g. My Awesome Task" />
-    </p>
-    <p>
-        <label for="instructions">Instructions: <span class="required">*</span></label><br /><textarea id="instructions" name="instructions">{{ @POST.instructions }}</textarea>
-        <br />
-        <span class="hint">&lt;p&gt;, &lt;br&gt;, &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;ul&gt; and &lt;li&gt; HTML tags allowed.</span>
-    </p>
-    <p>
-        <label for="requirements">Fulfillment Requirements: </label><br /><textarea id="requirements" name="requirements">{{ @POST.requirements }}</textarea><br />
-        <span class="hint">Highlight what you expect from the user.</span><br />
-    </p>
-    <p>
-        <label for="deadline">Deadline: <span class="required">*</span></label><br /><input type="text" id="deadline" name="deadline" value="{{ @POST.deadline }}" placeholder="e.g. 2016/12/25 23:59:59" /><br />
-        <span class="hint">Date in Year/Month/Day 24-Hour:Minute:Second format.</span>
-    </p>
-    <p>
-        <label for="tags">Search Tags: </label><br /><input type="text" id="tags" name="tags" value="{{ @POST.tags }}" placeholder="e.g. tag1, tag2, tag2" /><br />
-        <span class="hint">Comma-delimited list of tags.</span>
-    </p>
+<div class="code">
+    <form method="POST" action="/task/create">
+        <p>
+            <label for="title">Title: <span class="required">*</span></label><br /><input type="text" id="title" name="title" value="{{ @POST.title }}" placeholder="e.g. My Awesome Task" />
+        </p>
+        <p>
+            <label for="instructions">Instructions: <span class="required">*</span></label><br /><textarea id="instructions" name="instructions">{{ @POST.instructions }}</textarea>
+            <br />
+            <span class="hint">&lt;p&gt;, &lt;br&gt;, &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;ul&gt; and &lt;li&gt; HTML tags allowed.</span>
+        </p>
+        <p>
+            <label for="requirements">Fulfillment Requirements: </label><br /><textarea id="requirements" name="requirements">{{ @POST.requirements }}</textarea><br />
+            <span class="hint">Highlight what you expect from the user.</span><br />
+        </p>
+        <p>
+            <label for="deadline">Deadline: <span class="required">*</span></label><br /><input type="text" id="deadline" name="deadline" value="{{ @POST.deadline }}" placeholder="e.g. 2016/12/25 23:59:59" /><br />
+            <span class="hint">Date in Year/Month/Day 24-Hour:Minute:Second format.</span>
+        </p>
+        <p>
+            <label for="tags">Search Tags: </label><br /><input type="text" id="tags" name="tags" value="{{ @POST.tags }}" placeholder="e.g. tag1, tag2, tag2" /><br />
+            <span class="hint">Comma-delimited list of tags.</span>
+        </p>
 
-    <p>
-        <label for="file[0]">Files: </label><br />
-        <input type="file" id="file[0]" name="file[0]" /><br />
-        <input type="file" id="file[1]" name="file[1]" /><br />
-        <input type="file" id="file[2]" name="file[2]" /><br />
-        <span class="hint">Upload up to 3 files</span>
-    </p>
+        <p>
+            <label for="file[0]">Files: </label><br />
+            <input type="file" id="file[0]" name="file[0]" /><br />
+            <input type="file" id="file[1]" name="file[1]" /><br />
+            <input type="file" id="file[2]" name="file[2]" /><br />
+            <span class="hint">Upload up to 3 files</span>
+        </p>
 
-    <input type="submit" value="Create Task" />
-</form>
+        <input type="submit" value="Create Task" />
+    </form>
+</div>
