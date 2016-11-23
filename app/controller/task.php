@@ -235,7 +235,7 @@ class Task extends Root
             parent::fourOhFour($f3);
         }
 
-        if ($task->getCreatedByUser()->getId() != static::$user->getId()) {
+        if ($task->getCreatedByUserId() != static::$user->getId()) {
             parent::fourOhThree($f3);
         }
     }
