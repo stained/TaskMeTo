@@ -111,6 +111,12 @@ td.align_left_fit {
     white-space:nowrap;
 }
 
+td.align_center_fit {
+    text-align: center;
+    width:1%;
+    white-space:nowrap;
+}
+
 th {
     padding: 5px;
     background: #bb0000;

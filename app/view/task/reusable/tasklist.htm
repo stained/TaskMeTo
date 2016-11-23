@@ -1,3 +1,9 @@
+<repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
+    <check if="{{ @user && @user->getId() == @task->getCreatedByUserId() }}">
+        <set isOwner = 'true' />
+    </check>
+</repeat>
+
 <table>
     <tr>
         <th>
@@ -10,11 +16,25 @@
             Deadline
         </th>
         <th>
-            Stats
+            Subscribed
         </th>
+        <check if="{{ @isOwner }}">
+            <th>
+                Tools
+            </th>
+        </check>
     </tr>
     <repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
-        <check if="{{ @task->isPublished() }}">
+        <check if="{{ @user && @user->getId() == @task->getCreatedByUserId() }}">
+            <true>
+                <set isOwner = 'true' />
+            </true>
+            <false>
+                <set isOwner = 'false' />
+            </false>
+        </check>
+
+        <check if="{{ @task->isPublished() || @isOwner }}">
         <tr>
             <td>
                 <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
@@ -25,11 +45,33 @@
                 </repeat>
             </td>
             <td class="align_left_fit">
+                <check if="{{ @task->hasDeadlinePassed() }}">
+                    <true>
+                        <div class="deadline_passed_indicator"></div>
+                    </true>
+                    <false>
+                        <div class="deadline_not_passed_indicator"></div>
+                    </false>
+                </check>
                 {{ @task->getFormattedDeadline() }}
             </td>
-            <td class="align_left_fit">
-                Stats here (eg. how many users)
+            <td class="align_center_fit">
+                {{ @task->getSubscriberCount() }}
             </td>
+            <check if="{{ @isOwner }}">
+                <td class="align_right_fit">
+                    <check if="{{ @task->isPublished() }}">
+                        <false>
+                            <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+                        </false>
+                        <true>
+                            <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+                        </true>
+                    </check> |
+                    <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
+                    <a href="/task/delete/{{ @task->getId() }}">Delete</a>
+                </td>
+            </check>
         </tr>
         </check>
     </repeat>

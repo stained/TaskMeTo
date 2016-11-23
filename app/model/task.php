@@ -63,6 +63,15 @@ class Task extends Root
     }
 
     /**
+     * @return int
+     */
+    public function getSubscriberCount()
+    {
+        // TODO get actual subscription count
+        return 0;
+    }
+
+    /**
      * @return bool
      */
     public function isPublished()
@@ -150,6 +159,14 @@ class Task extends Root
     {
         $this->instructions = $instructions;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreatedByUserId()
+    {
+        return $this->createdByUserId;
     }
 
     /**

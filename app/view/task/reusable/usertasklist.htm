@@ -1,8 +1,7 @@
 <h2>Current Tasks</h2>
 <check if="{{ @currentTasks }}">
     <true>
-        <set tasks=@currentTasks />
-        <include href="task/reusable/tasklist.htm" />
+        <include href="task/reusable/tasklist.htm" with="tasks=@currentTasks" />
     </true>
     <false>
         <check if="{{ @isOwner }}">
@@ -19,8 +18,7 @@
 <h2>Completed Tasks</h2>
 <check if="{{ @completedTasks }}">
     <true>
-        <set tasks=@completedTasks />
-        <include href="task/reusable/tasklist.htm" />
+        <include href="task/reusable/tasklist.htm" with="tasks=@completedTasks" />
     </true>
     <false>
         <check if="{{ @isOwner }}">
@@ -33,64 +31,7 @@
 <h2>Created Tasks</h2>
 <check if="{{ @createdTasks }}">
     <true>
-        <check if="{{ @createdTasks }}">
-            <true>
-
-                <table>
-                    <tr>
-                        <th>
-                            Title
-                        </th>
-                        <th>
-                            Deadline
-                        </th>
-                        <th>
-                            Stats
-                        </th>
-                        <check if="{{ @isOwner }}">
-                            <th>
-                                Tools
-                            </th>
-                        </check>
-                    </tr>
-                    <repeat group="{{ @createdTasks }}" key="{{ @key }}" value="{{ @task }}">
-                        <tr>
-                            <td>
-                                <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
-                            </td>
-                            <td class="align_left_fit">
-                                <check if="{{ @task->hasDeadlinePassed() }}">
-                                    <true>
-                                        <div class="deadline_passed_indicator"></div>
-                                    </true>
-                                    <false>
-                                        <div class="deadline_not_passed_indicator"></div>
-                                    </false>
-                                </check>
-                                {{ @task->getFormattedDeadline() }}
-                            </td>
-                            <td class="align_left_fit">
-                                Stats here
-                            </td>
-                            <check if="{{ @isOwner }}">
-                                <td class="align_right_fit">
-                                    <check if="{{ @task->isPublished() }}">
-                                        <false>
-                                            <a href="/task/publish/{{ @task->getId() }}">Publish</a>
-                                        </false>
-                                        <true>
-                                            <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
-                                        </true>
-                                    </check> |
-                                    <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
-                                    <a href="/task/delete/{{ @task->getId() }}">Delete</a>
-                                </td>
-                            </check>
-                        </tr>
-                    </repeat>
-                </table>
-            </true>
-        </check>
+        <include href="task/reusable/tasklist.htm" with="tasks=@createdTasks" />
     </true>
     <false>
         <check if="{{ @isOwner }}">
