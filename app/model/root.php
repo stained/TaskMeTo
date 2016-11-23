@@ -49,4 +49,29 @@ abstract class Root
         $this->deleted = $deleted;
         return $this;
     }
+
+    /**
+     * @param array $result
+     * @return static
+     */
+    protected static function populateMany($result)
+    {
+        if (!$result) {
+            return null;
+        }
+
+        $many = [];
+
+        foreach ($result as $item) {
+            $obj = static::populateOne($item);
+
+            if ($obj) {
+                $many[] = $obj;
+            }
+        }
+
+        return $many;
+    }
+
+    protected abstract static function populateOne($result);
 }

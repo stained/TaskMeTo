@@ -69,6 +69,15 @@ class Root
 
     /**
      * @param \Base $f3
+     */
+    public static function fourOhThree($f3)
+    {
+        $f3->set('ERROR.text', "Sorry Dave I can't let you do that.");
+        static::error($f3);
+    }
+
+    /**
+     * @param \Base $f3
      * @param string $template
      * @param array $variables
      */

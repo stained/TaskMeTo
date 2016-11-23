@@ -1,49 +1,9 @@
+<div class="sub_nav_bar">
+    Dashboard | <a href="/user/edit">Edit Profile</a>
+</div>
+
 <h1>{{ @username }}</h1>
 <hr />
 
-<h2>Current Tasks</h2>
-<check if="{{ @currentTasks }}">
-    <true>
-        Current tasks go here
-    </true>
-    <false>
-        <check if="{{ @isOwner }}">
-            <false>{{ @username }} does not have any current tasks.</false>
-            <true>
-                You do not have any current tasks.
-                <br /><br />
-                Look for open <a href="/tasks">tasks</a>.
-            </true>
-        </check>
-    </false>
-</check>
+<include href="task/reusable/taskownerlist.htm" />
 
-<h2>Completed Tasks</h2>
-<check if="{{ @completedTasks }}">
-    <true>
-        Completed tasks go here
-    </true>
-    <false>
-        <check if="{{ @isOwner }}">
-            <false>{{ @username }} has not completed any tasks yet.</false>
-            <true>You have not completed any tasks yet.</true>
-        </check>
-    </false>
-</check>
-
-<h2>Created Tasks</h2>
-<check if="{{ @createdTasks }}">
-    <true>
-        Created tasks go here
-    </true>
-    <false>
-        <check if="{{ @isOwner }}">
-            <false>{{ @username }} has not created any tasks yet.</false>
-            <true>
-                You have not created any tasks yet.
-                <br /><br />
-                <a href="/task/create">Create</a> one now?
-            </true>
-        </check>
-    </false>
-</check>

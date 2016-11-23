@@ -1,5 +1,6 @@
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/site.css">
 </head>
 <body>
@@ -11,19 +12,19 @@
         <include href="nav.htm" />
     </div>
 
+    <check if="{{ @error }}">
+        <div class="error">
+            {{ @error }}
+        </div>
+    </check>
+
+    <check if="{{ @message }}">
+        <div class="message">
+            {{ @message }}
+        </div>
+    </check>
+
     <div class="content">
-        <check if="{{ @error }}">
-            <div class="error">
-                {{ @error }}
-            </div>
-        </check>
-
-        <check if="{{ @message }}">
-            <div class="message">
-                {{ @message }}
-            </div>
-        </check>
-
         <include href="{{ @content }}" />
     </div>
 </body>

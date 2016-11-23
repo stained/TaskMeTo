@@ -18,7 +18,12 @@ class User extends Root
         $username = $f3->get('PARAMS.username');
 
         if (!$username) {
-            $f3->reroute('/');
+            if (!static::$user) {
+                parent::fourOhFour($f3);
+            }
+            else {
+                $username = static::$user->getUsername();
+            }
         }
 
         $displayName = $username;
@@ -41,7 +46,7 @@ class User extends Root
 
         $currentTasks = UserTask::getCurrentForUser($user);
         $completedTasks = UserTask::getCompletedForUser($user);
-        $createdTasks = Task::getForUser($user);
+        $createdTasks = Task::getCreatedForUser($user);
 
         $f3->set('currentTasks', $currentTasks);
         $f3->set('completedTasks', $completedTasks);
@@ -104,12 +109,12 @@ class User extends Root
             static::render($f3, $template, array('nav'=>$nav));
         }
 
-        $username = $post['username'];
+        $username = strip_tags(trim($post['username'] ? $post['username'] : ''));
         $password = $post['password'];
         $email = $post['email'];
 
         // validate username
-        if (!$username || empty(trim($username))) {
+        if (!$username) {
             static::render($f3, $template, array('nav'=>$nav,
                 'error' => 'Invalid username'
             ));

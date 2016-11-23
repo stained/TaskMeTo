@@ -2,13 +2,17 @@
     <check if="{{ @user }}">
         <false><a href="/user/signin?returnpath=/tasks">Sign in</a> to create new, or view existing tasks.</false>
         <true>
-            <a href="/task/create">Create New Task</a> | <a href="/tasks/view">View Your Tasks</a>
+            Open Tasks | <a href="/task/create">Create New Task</a> | <a href="/tasks/view">Your Tasks</a>
         </true>
     </check>
 </div>
 
 <h1>Open Tasks</h1>
-<check if="{{ @openTasks }}">
+<check if="{{ @REQUEST.tag }}">
+    <h4>tagged <a href="/tasks?tag={{ @REQUEST.tag }}">{{ @REQUEST.tag }}</a></h4>
+</check>
+
+<check if="{{ @tasks }}">
     <false>
         <p>
         There are no opens tasks at present.
@@ -21,6 +25,6 @@
         </check>
     </false>
     <true>
-        Open tasks go here.
+        <include href="task/reusable/tasklist.htm" />
     </true>
 </check>

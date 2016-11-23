@@ -1,0 +1,46 @@
+<check if="{{ @isOwner }}">
+    <div class="sub_nav_bar">
+        <check if="{{ @task->isPublished() }}">
+            <false>
+                <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+            </false>
+            <true>
+                <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+            </true>
+        </check> |
+        <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
+        <a href="/task/delete/{{ @task->getId() }}">Delete</a>
+    </div>
+</check>
+
+<h1>{{ @task->getTitle() }}</h1>
+<h4>Created by <a href="/user/profile/{{ @task->getCreatedByUser()->getUsername() }}">{{ @task->getCreatedByUser()->getUsername() }}</a></h4>
+
+<h2>Instructions</h2>
+
+<div class="code">
+    {{ @task->getInstructions() | raw }}
+</div>
+
+<check if="{{ @task->getRequirements() }}">
+    <h2>Fulfillment Requirements</h2>
+
+    <div class="code">
+        {{ @task->getRequirements() | raw }}
+    </div>
+</check>
+
+<h2>Due</h2>
+
+<div class="code">
+    {{ @task->getFormattedDeadline() }}
+</div>
+
+<check if="{{ @tags }}">
+    <h2>Tags</h2>
+    <div class="code">
+        <repeat group="{{ @tags }}" key="{{ @key }}" value="{{ @tag }}">
+            <a href="/tasks?tag={{ @tag->getTag() }}">{{ @tag->getTag() }}</a>&nbsp;
+        </repeat>
+    </div>
+</check>

@@ -42,6 +42,29 @@ class Task extends Root
     protected $deadlineTimestamp;
 
     /**
+     * @var bool
+     */
+    protected $published = false;
+
+    /**
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return $this->published;
+    }
+
+    /**
+     * @param bool $published
+     * @return $this
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getCreatedTimestamp()
@@ -122,6 +145,16 @@ class Task extends Root
     }
 
     /**
+     * @param int $userId
+     * @return $this
+     */
+    protected function setCreatedByUserId($userId)
+    {
+        $this->createdByUserId = $userId;
+        return $this;
+    }
+
+    /**
      * @param User $createdByUser
      * @return $this
      */
@@ -164,6 +197,22 @@ class Task extends Root
     }
 
     /**
+     * @return bool
+     */
+    public function hasDeadlinePassed()
+    {
+        return time() >= $this->deadlineTimestamp;
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getFormattedDeadline()
+    {
+        return date("D, F j Y, H:i:s", $this->deadlineTimestamp);
+    }
+
+    /**
      * @param int $deadlineTimestamp
      * @return $this
      */
@@ -177,26 +226,59 @@ class Task extends Root
      * @param User $user
      * @return Task|null
      */
-    public static function getForUser($user)
+    public static function getCreatedForUser($user)
     {
+        $mysql = MySql::instance();
 
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `deleted` = 0',
+            array(':userId'=>$user->getId()));
+
+        return self::populateMany($result);
     }
 
     /**
-     * @return Task|null
+     * get all without a passed deadline and published
+     *
+     * @return Task[]|null
      */
     public static function getOpen()
     {
+        $mysql = MySql::instance();
 
+        $now = time();
+
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `deadlineTimestamp` > :now AND `published` = 1 AND `deleted` = 0',
+            array(':now'=>$now));
+
+        return self::populateMany($result);
     }
 
     /**
+     * get all without a passed deadline and published, by tag
+     *
      * @param string $tag
-     * @return Task|null
+     * @return Task[]|null
      */
     public static function getOpenForTag($tag)
     {
+        // we could do this with a join query, but since we have the objects...
+        $taskTags = TaskTag::getAllForTag($tag);
 
+        if (!$taskTags) {
+            return null;
+        }
+
+        $tasks = [];
+
+        foreach ($taskTags as $taskTag) {
+            $task = $taskTag->getTask();
+
+            if ($task) {
+                $tasks[] = $task;
+            }
+        }
+
+        return $tasks;
     }
 
     /**
@@ -207,10 +289,10 @@ class Task extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `Task` WHERE `id` = :id LIMIT 1',
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `id` = :id AND `deleted` = 0 LIMIT 1',
             array(':id'=>$id));
 
-        return self::populateOne($result);
+        return self::populateOne($result[0]);
     }
 
     /**
@@ -225,10 +307,16 @@ class Task extends Root
 
         $obj = new self;
 
-        $obj->setId($result[0]['id'])
-            ->setCreatedTimestamp($result[0]['createdTimestamp'])
-            ->setUpdatedTimestamp($result[0]['updatedTimestamp'])
-            ->setDeleted($result[0]['deleted']);
+        $obj->setId($result['id'])
+            ->setCreatedTimestamp($result['createdTimestamp'])
+            ->setUpdatedTimestamp($result['updatedTimestamp'])
+            ->setDeleted($result['deleted'])
+            ->setCreatedByUserId($result['createdByUserId'])
+            ->setTitle($result['title'])
+            ->setInstructions($result['instructions'])
+            ->setRequirements($result['requirements'])
+            ->setDeadlineTimestamp($result['deadlineTimestamp'])
+            ->setPublished($result['published']);
 
         return $obj;
     }
@@ -243,12 +331,20 @@ class Task extends Root
         $this->updatedTimestamp = time();
 
         $result = $mysql->query(
-            'UPDATE `Task` SET `deleted` = :deleted, `createdTimestamp` = :createdTimestamp, ' .
-            '`updatedTimestamp` = :updatedTimestamp, WHERE `id` = :id',
+            'UPDATE `Task` SET `deleted` = :deleted, `createdTimestamp` = :createdTimestamp, `updatedTimestamp` = :updatedTimestamp, ' .
+            '`createdByUserId` = :createdByUserId, `title` = :title, `instructions` = :instructions, `requirements` = :requirements, ' .
+            '`deadlineTimestamp` = :deadlineTimestamp, `published` = :published ' .
+            'WHERE `id` = :id',
             array(
                 ':deleted'=>$this->deleted,
                 ':createdTimestamp'=>$this->createdTimestamp,
                 ':updatedTimestamp'=>$this->updatedTimestamp,
+                ':createdByUserId'=>$this->createdByUserId,
+                ':title'=>$this->title,
+                ':instructions'=>$this->instructions,
+                ':requirements'=>$this->requirements,
+                ':deadlineTimestamp'=>$this->deadlineTimestamp,
+                ':published'=>$this->published,
                 ':id'=>$this->id
             )
         );
@@ -257,9 +353,14 @@ class Task extends Root
     }
 
     /**
+     * Don't need much for insert, we'll get the rest later
+     *
+     * @param string $title
+     * @param string $instructions
+     * @param User $createdByUser
      * @return Task
      */
-    public static function create()
+    public static function create($title, $instructions, $createdByUser)
     {
         $obj = new self;
 
@@ -267,6 +368,9 @@ class Task extends Root
 
         $obj->setCreatedTimestamp($now)
             ->setUpdatedTimestamp($now)
+            ->setCreatedByUser($createdByUser)
+            ->setTitle($title)
+            ->setInstructions($instructions)
             ->insert();
 
         return $obj;
@@ -277,14 +381,17 @@ class Task extends Root
         $mysql = MySql::instance();
 
         $result = $mysql->query(array(
-            'INSERT INTO `Task` (`deleted`, `createdTimestamp`, `updatedTimestamp`,) ' .
-            'VALUES (0, :createdTimestamp, :updatedTimestamp, )',
+            'INSERT INTO `Task` (`deleted`, `createdTimestamp`, `updatedTimestamp`, `title`, `createdByUserId`, `published`, `instructions`) ' .
+            'VALUES (0, :createdTimestamp, :updatedTimestamp, :title, :createdByUserId, 0, :instructions)',
             'SELECT LAST_INSERT_ID() AS id'
         ),
             array(
                 array(
                     ':createdTimestamp'=>$this->createdTimestamp,
                     ':updatedTimestamp'=>$this->updatedTimestamp,
+                    ':title'=>$this->title,
+                    ':instructions'=>$this->instructions,
+                    ':createdByUserId'=>$this->createdByUserId
                 ),
                 array()
             )

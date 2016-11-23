@@ -64,3 +64,75 @@ a {
     padding: 10px;
     border: 1px solid #a0f334;
 }
+
+textarea {
+    width: 50%;
+    height: 100px;
+}
+
+input[type=text], input[type=password] {
+    width: 25%;
+}
+
+span.hint {
+    font-size: 0.75em;
+    font-style: italic;
+}
+
+span.required {
+    font-size: 0.75em;
+    font-style: italic;
+    color: #ff0000;
+}
+
+table {
+    width: 100%;
+}
+
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+
+td {
+    padding: 5px;
+    vertical-align: middle;
+}
+
+td.align_right_fit {
+    text-align: right;
+    width:1%;
+    white-space:nowrap;
+}
+
+td.align_left_fit {
+    text-align: left;
+    width:1%;
+    white-space:nowrap;
+}
+
+th {
+    padding: 5px;
+    background: #bb0000;
+}
+
+div.deadline_passed_indicator {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #880000;
+    width: 10px;
+    height: 10px;
+    background-color: #ff0000;
+}
+
+div.deadline_not_passed_indicator {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #008800;
+    width: 10px;
+    height: 10px;
+    background-color: #00ff00;
+}
+
+div.code {
+    background: #cccac1;
+    padding: 10px;
+}

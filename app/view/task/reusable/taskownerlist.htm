@@ -1,0 +1,105 @@
+<h2>Current Tasks</h2>
+<check if="{{ @currentTasks }}">
+    <true>
+        <set tasks=@currentTasks />
+        <include href="task/reusable/tasklist.htm" />
+    </true>
+    <false>
+        <check if="{{ @isOwner }}">
+            <false>{{ @username }} does not have any current tasks.</false>
+            <true>
+                You do not have any current tasks.
+                <br /><br />
+                Look for open <a href="/tasks">tasks</a>.
+            </true>
+        </check>
+    </false>
+</check>
+
+<h2>Completed Tasks</h2>
+<check if="{{ @completedTasks }}">
+    <true>
+        <set tasks=@completedTasks />
+        <include href="task/reusable/tasklist.htm" />
+    </true>
+    <false>
+        <check if="{{ @isOwner }}">
+            <false>{{ @username }} has not completed any tasks yet.</false>
+            <true>You have not completed any tasks yet.</true>
+        </check>
+    </false>
+</check>
+
+<h2>Created Tasks</h2>
+<check if="{{ @createdTasks }}">
+    <true>
+        <check if="{{ @createdTasks }}">
+            <false>
+                You have not created any tasks yet. <br /><br />
+                Would you like to <a href="/task/create">create</a> a new task?
+            </false>
+            <true>
+                <table>
+                    <tr>
+                        <th>
+                            Title
+                        </th>
+                        <th>
+                            Deadline
+                        </th>
+                        <th>
+                            Stats
+                        </th>
+                        <th>
+                            Tools
+                        </th>
+                    </tr>
+                    <repeat group="{{ @createdTasks }}" key="{{ @key }}" value="{{ @task }}">
+                        <tr>
+                            <td>
+                                <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
+                            </td>
+                            <td class="align_left_fit">
+                                <check if="{{ @task->hasDeadlinePassed() }}">
+                                    <true>
+                                        <div class="deadline_passed_indicator"></div>
+                                    </true>
+                                    <false>
+                                        <div class="deadline_not_passed_indicator"></div>
+                                    </false>
+                                </check>
+                                {{ @task->getFormattedDeadline() }}
+                            </td>
+                            <td class="align_left_fit">
+                                Stats here
+                            </td>
+                            <td class="align_right_fit">
+                                <check if="{{ @task->isPublished() }}">
+                                    <false>
+                                        <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+                                    </false>
+                                    <true>
+                                        <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+                                    </true>
+                                </check> |
+                                <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
+                                <a href="/task/delete/{{ @task->getId() }}">Delete</a>
+                            </td>
+                        </tr>
+                    </repeat>
+                </table>
+            </true>
+        </check>
+    </true>
+    <false>
+        <check if="{{ @isOwner }}">
+            <false>{{ @username }} has not created any tasks yet.</false>
+            <true>
+                You have not created any tasks yet.
+                <br /><br />
+                <a href="/task/create">Create</a> one now?
+            </true>
+        </check>
+    </false>
+</check>
+

@@ -172,10 +172,10 @@ class User extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `User` WHERE `username` = :username LIMIT 1',
+        $result = $mysql->query('SELECT * FROM `User` WHERE `username` = :username AND `deleted` = 0 LIMIT 1',
                                 array(':username'=>$username));
 
-        return self::populateOne($result);
+        return self::populateOne($result[0]);
     }
 
     /**
@@ -186,10 +186,10 @@ class User extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `User` WHERE `email` = :email LIMIT 1',
+        $result = $mysql->query('SELECT * FROM `User` WHERE `email` = :email AND `deleted` = 0 LIMIT 1',
             array(':email'=>$email));
 
-        return self::populateOne($result);
+        return self::populateOne($result[0]);
     }
 
     /**
@@ -200,10 +200,10 @@ class User extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `User` WHERE `id` = :id LIMIT 1',
+        $result = $mysql->query('SELECT * FROM `User` WHERE `id` = :id AND `deleted` = 0 LIMIT 1',
             array(':id'=>$id));
 
-        return self::populateOne($result);
+        return self::populateOne($result[0]);
     }
 
     /**
@@ -214,10 +214,10 @@ class User extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query('SELECT * FROM `User` WHERE `loginToken` = :loginToken LIMIT 1',
+        $result = $mysql->query('SELECT * FROM `User` WHERE `loginToken` = :loginToken AND `deleted` = 0 LIMIT 1',
             array(':loginToken'=>$loginToken));
 
-        return self::populateOne($result);
+        return self::populateOne($result[0]);
     }
 
     /**
@@ -232,14 +232,14 @@ class User extends Root
 
         $obj = new self;
 
-        $obj->setId($result[0]['id'])
-            ->setCreatedTimestamp($result[0]['createdTimestamp'])
-            ->setUpdatedTimestamp($result[0]['updatedTimestamp'])
-            ->setDeleted($result[0]['deleted'])
-            ->setUsername($result[0]['username'])
-            ->setPasswordHash($result[0]['passwordHash'])
-            ->setLoginToken($result[0]['loginToken'])
-            ->setEmail($result[0]['email']);
+        $obj->setId($result['id'])
+            ->setCreatedTimestamp($result['createdTimestamp'])
+            ->setUpdatedTimestamp($result['updatedTimestamp'])
+            ->setDeleted($result['deleted'])
+            ->setUsername($result['username'])
+            ->setPasswordHash($result['passwordHash'])
+            ->setLoginToken($result['loginToken'])
+            ->setEmail($result['email']);
 
         return $obj;
     }

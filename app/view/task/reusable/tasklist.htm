@@ -1,0 +1,28 @@
+<table>
+    <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Deadline
+        </th>
+        <th>
+            Stats
+        </th>
+    </tr>
+    <repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
+        <check if="{{ @task->isPublished() }}">
+        <tr>
+            <td>
+                <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
+            </td>
+            <td class="align_left_fit">
+                {{ @task->getFormattedDeadline() }}
+            </td>
+            <td class="align_left_fit">
+                Stats here (eg. how many users)
+            </td>
+        </tr>
+        </check>
+    </repeat>
+</table>
