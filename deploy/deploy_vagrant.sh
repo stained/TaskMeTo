@@ -41,8 +41,8 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server
 apt-get -y install php5-mysql
 apt-get -y install mysql-client
 
-# import db
-mysql -u root < /var/${PROJECT_NAME}/deploy/${PROJECT_NAME}.sql
+# import db -- as long as it's numerically sorted correctly this should do things in the correct order
+cat /var/${PROJECT_NAME}/deploy/db/*.sql | mysql -u root
 
 # copy apache config and enable it
 cp /var/${PROJECT_NAME}/deploy/${PROJECT_NAME}.conf /etc/apache2/sites-available/${PROJECT_NAME}.conf
@@ -56,4 +56,5 @@ ln -s /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
 # restart services
 service apache2 restart
 
-
+mkdir /var/${PROJECT_NAME}/upload
+chmod a+w /var/${PROJECT_NAME}/upload

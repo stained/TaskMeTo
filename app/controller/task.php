@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Model\TaskFile;
 use Model\TaskTag;
 use Model\UserTask;
 
@@ -44,6 +45,8 @@ class Task extends Root
             static::render($f3, 'task/create', array('nav'=>$nav));
         }
 
+        $files = static::handleFileUpload($f3, true);
+
         $title = strip_tags($post['title'] ? $post['title'] : '');
         $instructions = strip_tags($post['instructions'] ? $post['instructions'] : '', '<p><br><b><i><u>');
         $deadline = $post['deadline'] ? $post['deadline'] : '';
@@ -82,8 +85,16 @@ class Task extends Root
             }
         }
 
+        if ($files) {
+            foreach ($files as $file) {
+                // create task file
+                TaskFile::create($task, $file);
+            }
+        }
+
         $f3->reroute('/task/view/' . $task->getId());
     }
+
 
     /**
      * @param \Base $f3
@@ -120,7 +131,7 @@ class Task extends Root
 
         if (static::$user && $task->getCreatedByUser()->getId() == static::$user->getId()) {
             $f3->set('isOwner', true);
-            $nav = array('Home'=>'/', 'Your Tasks'=>'/tasks/view', 'Viewing ' . $task->getTitle()=>'');
+            $nav = array('Home'=>'/', 'Your Tasks'=>'/tasks/view', $task->getTitle()=>'');
         }
         else {
             $f3->set('isOwner', false);
@@ -128,7 +139,7 @@ class Task extends Root
         }
 
         $f3->set('tags', TaskTag::getAllForTask($task));
-
+        $f3->set('files', TaskFile::getAllForTask($task));
 
         static::render($f3, 'task/view', array('nav'=>$nav));
     }
@@ -143,7 +154,9 @@ class Task extends Root
         $task = \Model\Task::getById($taskId);
         self::validateOwner($f3, $task);
 
-        static::render($f3, 'task/edit', array('nav'=>array('Home'=>'/', 'Your Tasks'=>'/tasks/view', "Editing {$task->getTitle()}"=>'')));
+        static::render($f3, 'task/edit', array('nav'=>array('Home'=>'/', 'Your Tasks'=>'/tasks/view',
+                                                            $task->getTitle()=>'/task/view/' . $task->getId(),
+                                                            'Edit'=>'')));
     }
 
     /**
@@ -155,6 +168,22 @@ class Task extends Root
 
         $task = \Model\Task::getById($taskId);
         self::validateOwner($f3, $task);
+
+        // get files
+        $taskFiles = TaskFile::getAllForTask($task);
+
+        if (!empty($taskFiles)) {
+            foreach ($taskFiles as $taskFile) {
+                $file = $taskFile->getFile();
+
+                if ($file) {
+                    $file->setDeleted(true)->update();
+                }
+            }
+        }
+
+        TaskTag::deleteForTask($task);
+        TaskFile::deleteForTask($task);
 
         $task->setDeleted(true)->update();
 

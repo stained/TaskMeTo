@@ -14,6 +14,7 @@ $f3->set('UI', __DIR__ . '/../view/');
 $f3->config('../config/config.ini');
 $f3->config('../config/mysql.ini');
 $f3->config('../config/routes.ini');
+$f3->config('../config/paths.ini');
 
 $f3->set('ONERROR', '\Controller\Root::error');
 

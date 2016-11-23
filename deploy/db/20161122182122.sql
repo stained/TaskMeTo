@@ -52,3 +52,4 @@ CREATE TABLE `TaskTag` (
   KEY `taskId` (`taskId`),
   CONSTRAINT `TaskTag_ibfk_1` FOREIGN KEY (`taskId`) REFERENCES `Task` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

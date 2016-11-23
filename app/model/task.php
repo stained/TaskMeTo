@@ -246,7 +246,7 @@ class Task extends Root
 
         $now = time();
         $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `published` = 1 ' .
-                                'AND `deadlineTimestamp` > :now AND `deleted` = 0',
+                                'AND `deadlineTimestamp` > :now AND `deleted` = 0 ORDER BY `id` DESC',
             array(
                 ':userId'=>$user->getId(),
                 ':now'=>$now
@@ -267,7 +267,8 @@ class Task extends Root
 
         $now = time();
 
-        $result = $mysql->query('SELECT * FROM `Task` WHERE `deadlineTimestamp` > :now AND `published` = 1 AND `deleted` = 0',
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `deadlineTimestamp` > :now AND `published` = 1 AND `deleted` = 0 ' .
+                                'ORDER BY `id` DESC',
             array(':now'=>$now));
 
         return self::populateMany($result);

@@ -147,3 +147,7 @@ div.sub_header {
 label {
     display: block;
 }
+
+input[type=submit] {
+    padding: 5px;
+}

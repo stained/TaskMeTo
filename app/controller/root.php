@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Model\File;
 use Model\User;
 
 class Root
@@ -74,6 +75,83 @@ class Root
     {
         $f3->set('ERROR.text', "Sorry Dave I can't let you do that.");
         static::error($f3);
+    }
+
+    /**
+     * @param \Base $f3
+     * @param bool $public
+     * @return File[]|null
+     */
+    protected static function handleFileUpload($f3, $public = false)
+    {
+        $f3->set('UPLOADS', $f3->get('paths.file_upload_path'));
+
+        $web = \Web::instance();
+
+        $files = $web->receive(function($file, $formFieldName){
+            $allowedTypes = array(
+                'image/png', 'image/jpeg', 'image/x-png', 'image/jpg', 'application/pdf'
+            );
+
+            if (!in_array($file['type'], $allowedTypes)) {
+                // type not allowed
+                return false;
+            }
+
+            /* looks like:
+              array(5) {
+                  ["name"] =>     string(19) "csshat_quittung.png"
+                  ["type"] =>     string(9) "image/png"
+                  ["tmp_name"] => string(14) "/tmp/php2YS85Q"
+                  ["error"] =>    int(0)
+                  ["size"] =>     int(172245)
+                }
+            */
+            // $file['name'] already contains the slugged name now
+
+            // maybe you want to check the file size
+            if ($file['size'] == 0 || $file['size'] > (50 * 1024 * 1024)) {
+                // if bigger than 50 MB
+                return false; // this file is not valid, return false will skip moving it
+            }
+
+            // everything went fine, hurray!
+            return true; // allows the file to be moved from php tmp dir to your defined upload dir
+        }, false, true);
+
+        $fileObjects = array();
+
+        if ($files) {
+            foreach ($files as $filePath=>$success) {
+                if ($success) {
+
+                    $pathInfo = pathInfo($filePath);
+                    $extension = $pathInfo['extension'];
+                    $originalFilename = $pathInfo['filename'] . '.' . $extension;
+
+                    // create file
+                    $file = File::create(
+                        $filePath,
+                        mime_content_type($filePath),
+                        filesize($filePath),
+                        $public,
+                        $originalFilename
+                    );
+
+                    // rename
+                    $newFilePath = $f3->get('paths.file_upload_path') . uniqid('f' . $file->getId() . '_', true)  . '.' . $extension;
+
+                    if(rename($filePath, $newFilePath)) {
+                        // if move succeeded update file
+                        $file->setPath($newFilePath)->update();
+                    }
+
+                    $fileObjects[] = $file;
+                }
+            }
+        }
+
+        return $fileObjects;
     }
 
     /**

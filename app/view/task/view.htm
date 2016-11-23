@@ -46,3 +46,14 @@
         </repeat>
     </div>
 </check>
+
+<check if="{{ @files }}">
+    <h2>Files</h2>
+    <div class="code">
+        <repeat group="{{ @files }}" key="{{ @key }}" value="{{ @taskFile }}">
+            <a href="/file/{{ @taskFile->getFile()->getId() }}" target="_blank">{{ @taskFile->getFile()->getOriginalFilename() }}</a>&nbsp;
+        </repeat>
+    </div>
+</check>
+
+<br />
