@@ -33,6 +33,7 @@ class User extends Root
             $displayName = 'You';
             $user = static::$user;
             $f3->set('isOwner', true);
+            $createdTasks = Task::getCreatedForUser($user);
         }
         else {
             $user = \Model\User::getByUsername($username);
@@ -42,11 +43,11 @@ class User extends Root
             }
 
             $f3->set('isOwner', false);
+            $createdTasks = Task::getCreatedAndOpenForUser($user);
         }
 
         $currentTasks = UserTask::getCurrentForUser($user);
         $completedTasks = UserTask::getCompletedForUser($user);
-        $createdTasks = Task::getCreatedForUser($user);
 
         $f3->set('currentTasks', $currentTasks);
         $f3->set('completedTasks', $completedTasks);

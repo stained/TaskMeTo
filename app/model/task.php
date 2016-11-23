@@ -237,6 +237,26 @@ class Task extends Root
     }
 
     /**
+     * @param User $user
+     * @return Task|null
+     */
+    public static function getCreatedAndOpenForUser($user)
+    {
+        $mysql = MySql::instance();
+
+        $now = time();
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `published` = 1 ' .
+                                'AND `deadlineTimestamp` > :now AND `deleted` = 0',
+            array(
+                ':userId'=>$user->getId(),
+                ':now'=>$now
+            )
+        );
+
+        return self::populateMany($result);
+    }
+
+    /**
      * get all without a passed deadline and published
      *
      * @return Task[]|null

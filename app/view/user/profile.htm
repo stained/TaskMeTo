@@ -1,6 +1,8 @@
-<div class="sub_nav_bar">
-    Dashboard | <a href="/user/edit">Edit Profile</a>
-</div>
+<check if="{{ @isOwner }}">
+    <div class="sub_nav_bar">
+        Dashboard | <a href="/user/edit">Edit Profile</a>
+    </div>
+</check>
 
 <h1>{{ @username }}</h1>
 <hr />
