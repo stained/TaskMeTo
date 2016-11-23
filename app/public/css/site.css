@@ -157,3 +157,7 @@ label {
 input[type=submit] {
     padding: 5px;
 }
+
+img.task_image_icon {
+    width: 50px;
+}

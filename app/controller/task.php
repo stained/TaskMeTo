@@ -129,7 +129,7 @@ class Task extends Root
 
         $f3->set('task', $task);
 
-        if (static::$user && $task->getCreatedByUser()->getId() == static::$user->getId()) {
+        if (static::$user && $task->getCreatedByUserId() == static::$user->getId()) {
             $f3->set('isOwner', true);
             $nav = array('Home'=>'/', 'Your Tasks'=>'/tasks/view', $task->getTitle()=>'');
         }

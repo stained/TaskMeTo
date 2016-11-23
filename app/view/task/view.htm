@@ -52,7 +52,14 @@
     <div class="code">
         <repeat group="{{ @files }}" key="{{ @key }}" value="{{ @taskFile }}">
             <p>
-                <a href="/file/{{ @taskFile->getFile()->getId() }}" target="_blank">{{ @taskFile->getFile()->getOriginalFilename() }}</a>
+                <a href="/file/{{ @taskFile->getFile()->getId() }}" target="_blank">
+                    <check if="{{ @taskFile->getFile()->isImage() }}">
+                        <img src="/file/{{ @taskFile->getFile()->getId() }}" class="task_image_icon" /><br />
+                    </check>
+                    <check if="{{ @taskFile->getFile()->isDocument() }}">
+                    </check>
+                    {{ @taskFile->getFile()->getOriginalFilename() }}
+                </a>
             </p>
         </repeat>
     </div>

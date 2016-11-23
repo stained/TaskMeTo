@@ -141,6 +141,24 @@ class File extends Root
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isImage()
+    {
+        return $this->mimeType == 'image/png' ||
+               $this->mimeType == 'image/x-png' ||
+               $this->mimeType == 'image/jpeg' ||
+               $this->mimeType == 'image/jpg';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDocument()
+    {
+        return $this->mimeType == 'application/pdf';
+    }
 
     public function update()
     {
