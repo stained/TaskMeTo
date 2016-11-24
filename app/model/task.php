@@ -294,7 +294,7 @@ class Task extends Root
         $mysql = MySql::instance();
 
         $result = $mysql->query('SELECT t.* FROM `Task` t, `UserTask` ut WHERE ' .
-                                'ut.taskId = t.id AND `createdByUserId` = :userId AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
+                                'ut.taskId = t.id AND `ut`.`userId` = :userId AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
                                 'AND `completedTimestamp` = 0 ORDER BY `acceptedTimestamp` DESC',
                                 array(':userId'=>$user->getId()));
 

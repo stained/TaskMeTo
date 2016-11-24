@@ -1,6 +1,11 @@
 <repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
     <check if="{{ @user && @user->getId() == @task->getCreatedByUserId() }}">
-        <set isOwner = 'true' />
+        <true>
+            <set isOwner = '1' />
+        </true>
+        <false>
+            <set isOwner = '0' />
+        </false>
     </check>
 </repeat>
 
@@ -27,10 +32,10 @@
     <repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
         <check if="{{ @user && @user->getId() == @task->getCreatedByUserId() }}">
             <true>
-                <set isOwner = 'true' />
+                <set isOwner = '1' />
             </true>
             <false>
-                <unset isOwner/>
+                <set isOwner = '0' />
             </false>
         </check>
 
