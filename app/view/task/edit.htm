@@ -46,7 +46,7 @@
                     <p>
                         <a href="/file/{{ @taskFile->getFile()->getId() }}" target="_blank">
                             <check if="{{ @taskFile->getFile()->isImage() }}">
-                                <img src="/file/{{ @taskFile->getFile()->getId() }}" class="task_image_icon" /><br />
+                                <img src="/file/{{ @taskFile->getFile()->getId() }}?w=100" class="task_image_icon" /><br />
                             </check>
                             <check if="{{ @taskFile->getFile()->isDocument() }}">
                             </check>

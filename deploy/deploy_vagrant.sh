@@ -39,6 +39,7 @@ sudo -u www-data COMPOSER_HOME=/var/tmp/${PROJECT_NAME}/.composer php composer.p
 # install mysql
 DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server
 apt-get -y install php5-mysql
+apt-get -y install php5-gd
 apt-get -y install mysql-client
 
 # import db -- as long as it's numerically sorted correctly this should do things in the correct order
