@@ -15,7 +15,7 @@
     <check if="{{ @user }}">
         <false><a href="/user/signin">Sign In</a></false>
         <true>
-            Logged in as <a href="/user/profile/{{ @user->getUsername()}}">{{ @user->getUsername() }}</a>.
+            Signed in as <a href="/user/profile/{{ @user->getUsername()}}">{{ @user->getUsername() }}</a>.
             <a href="/user/signout">Sign Out</a>
         </true>
     </check>
