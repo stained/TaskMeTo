@@ -28,7 +28,7 @@
             <span class="hint">Highlight what you expect from the user.</span><br />
         </p>
         <p>
-            <label for="deadline">Deadline: <span class="required">*</span></label><br /><input type="text" id="deadline" name="deadline" value="{{ @task->getFormattedDeadline('Y/m/d H:i:s') }}" placeholder="e.g. 2016/12/25 23:59:59" /><br />
+            <label for="deadline">Due: <span class="required">*</span></label><br /><input type="text" id="deadline" name="deadline" value="{{ @task->getFormattedDeadline('Y/m/d H:i:s') }}" placeholder="e.g. 2016/12/25 23:59:59" /><br />
             <span class="hint">Date in Year/Month/Day 24-Hour:Minute:Second format.</span>
         </p>
         <p>

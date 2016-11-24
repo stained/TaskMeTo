@@ -57,7 +57,7 @@ class Task extends Root
 
         if (!$title || !$instructions || !$deadline) {
             static::render($f3, 'task/create', array('nav'=>$nav,
-                'error' => 'Please enter a title, basic instructions, and a deadline date at minimum.'
+                'error' => 'Please enter a title, basic instructions, and a due date at minimum.'
             ));
         }
 
@@ -68,7 +68,7 @@ class Task extends Root
 
         if (!$deadlineDate || time() >= $deadlineDate->getTimestamp()) {
             static::render($f3, 'task/create', array('nav'=>$nav,
-                'error' => 'Please enter a valid deadline date.'
+                'error' => 'Please enter a valid due date.'
             ));
         }
 
@@ -212,7 +212,7 @@ class Task extends Root
 
         if (!$title || !$instructions || !$deadline) {
             static::render($f3, 'task/edit', array('nav'=>$nav,
-                'error' => 'Please enter a title, basic instructions, and a deadline date at minimum.'
+                'error' => 'Please enter a title, basic instructions, and a due date at minimum.'
             ));
         }
 
@@ -223,7 +223,7 @@ class Task extends Root
 
         if (!$deadlineDate || time() >= $deadlineDate->getTimestamp()) {
             static::render($f3, 'task/create', array('nav'=>$nav,
-                'error' => 'Please enter a valid deadline date.'
+                'error' => 'Please enter a valid due date.'
             ));
         }
 
@@ -385,7 +385,7 @@ class Task extends Root
         }
         else {
             if ($task->hasDeadlinePassed()) {
-                $f3->set('error', "Deadline has passed, so you can no longer subscribe to this task");
+                $f3->set('error', "Due date has passed, so you can no longer subscribe to this task");
             }
             else {
                 // subscribe!
