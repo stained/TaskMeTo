@@ -71,19 +71,19 @@
     <div class="code">
         <repeat group="{{ @subscribers }}" key="{{ @key }}" value="{{ @userTask }}">
             <set username="{{ @userTask->getUser()->getUsername() }}" />
-            <check if="{{ @task->hasDeadlinePassed() }}">
+            <check if="{{ @userTask->getCompletedTimestamp() > 0 }}">
                 <true>
-                    <check if="{{ @userTask->getCompletedTimestamp() > 0 }}">
-                        <true>
-                            <div class="deadline_completed_indicator"></div>
-                        </true>
-                        <false>
-                            <div class="deadline_not_completed_indicator"></div>
-                        </false>
-                    </check>
+                    <div class="deadline_completed_indicator"></div>
                 </true>
                 <false>
-                    <div class="deadline_in_progress_indicator"></div>
+                    <check if="{{ @task->hasDeadlinePassed() }}">
+                        <true>
+                            <div class="deadline_not_completed_indicator"></div>
+                        </true>
+                        <false>
+                            <div class="deadline_in_progress_indicator"></div>
+                        </false>
+                    </check>
                 </false>
             </check>
             <a href="/user/profile/{{ @username }}">{{ @username  }}</a>
