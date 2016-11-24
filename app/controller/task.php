@@ -384,7 +384,7 @@ class Task extends Root
             }
         }
         else {
-            if ($task->getDeadlineTimestamp()) {
+            if ($task->hasDeadlinePassed()) {
                 $f3->set('error', "Deadline has passed, so you can no longer subscribe to this task");
             }
             else {
