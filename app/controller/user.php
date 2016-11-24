@@ -46,8 +46,8 @@ class User extends Root
             $createdTasks = Task::getCreatedAndPublishedForUser($user);
         }
 
-        $currentTasks = UserTask::getCurrentForUser($user);
-        $completedTasks = UserTask::getCompletedForUser($user);
+        $currentTasks = Task::getCurrentForUser($user);
+        $completedTasks = Task::getCompletedForUser($user);
 
         $f3->set('currentTasks', $currentTasks);
         $f3->set('completedTasks', $completedTasks);

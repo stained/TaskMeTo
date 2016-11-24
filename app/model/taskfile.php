@@ -103,6 +103,21 @@ class TaskFile extends Root
 
     /**
      * @param Task $task
+     * @param File $file
+     * @return TaskFile
+     */
+    public static function getForTaskAndFile($task, $file)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT * FROM `TaskFile` WHERE `taskId` = :taskId AND `fileId` = :fileId',
+            array(':taskId'=>$task->getId(), ':fileId'=>$file->getId()));
+
+        return self::populateOne($result[0]);
+    }
+
+    /**
+     * @param Task $task
      * @return TaskFile[]
      */
     public static function getAllForTask($task)
@@ -175,5 +190,20 @@ class TaskFile extends Root
         );
     }
 
+    public function delete()
+    {
+        $mysql = MySql::instance();
 
+        $mysql->query('DELETE FROM `TaskFile` WHERE `taskId` = :taskId AND `fileId` = :fileId',
+            array(
+                ':taskId'=>$this->taskId,
+                ':fileId'=>$this->fileId
+            )
+        );
+    }
+
+    protected function update()
+    {
+        throw new \Exception('update() not supported on TaskFile');
+    }
 }

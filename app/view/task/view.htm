@@ -65,4 +65,56 @@
     </div>
 </check>
 
-<br />
+<h2>Subscribers</h2>
+
+<check if="{{ @subscribers }}">
+    <div class="code">
+        <repeat group="{{ @subscribers }}" key="{{ @key }}" value="{{ @userTask }}">
+            <set username="{{ @userTask->getUser()->getUsername() }}" />
+            <a href="/user/profile/{{ @username }}">{{ @username  }}</a>
+            <check if="{{ @task->hasDeadlinePassed() }}">
+                <true>
+                    <check if="{{ @userTask->getCompletedTimestamp() > 0 }}">
+                        <true>
+                            <div class="deadline_completed_indicator"></div>
+                        </true>
+                        <false>
+                            <div class="deadline_not_completed_indicator"></div>
+                        </false>
+                    </check>
+                </true>
+                <false>
+                    <div class="deadline_in_progress_indicator"></div>
+                </false>
+            </check>
+
+           &nbsp;
+        </repeat>
+    </div>
+</check>
+<p>
+<check if="{{ @user }}">
+    <true>
+        <check if="{{ @subscribedToTask }}">
+            <false>
+                <check if="{{ @task->hasDeadlinePassed() }}">
+                    <true>
+                        Deadline has passed, so you can no longer subscribe to this task.
+                    </true>
+                    <false>
+                        Would you like to <a href="/task/subscribe/{{ @task->getId() }}">accept and subscribe</a> to this task?
+                    </false>
+                </check>
+            </false>
+            <true>
+                Would you like to <a href="/task/unsubscribe/{{ @task->getId() }}">unsubscribe</a> from this task?
+                <include href="task/reusable/taskresponse.htm" />
+            </true>
+        </check>
+    </true>
+    <false>
+        <a href="/user/signin?returnpath=/task/subscribe/{{ @task->getId() }}">Sign in</a> to subscribe to task.
+    </false>
+</check>
+</p>
+<hr >

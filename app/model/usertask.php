@@ -68,6 +68,11 @@ class UserTask extends Root
         return $this;
     }
 
+    public function isComplete()
+    {
+        return $this->completedTimestamp > 0;
+    }
+
     /**
      * @return Task
      */
@@ -156,6 +161,59 @@ class UserTask extends Root
 
     /**
      * @param User $user
+     * @param Task $task
+     * @return UserTask|null
+     */
+    public static function getForUserAndTask($user, $task)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT * FROM `UserTask` WHERE `userId` = :userId AND `taskId` = :taskId ' .
+                                'AND `deleted` = 0 ORDER BY `id` DESC LIMIT 1',
+            array(
+                ':userId'=>$user->getId(),
+                ':taskId'=>$task->getId()
+            ));
+
+        return self::populateOne($result[0]);
+    }
+
+    /**
+     * @param Task $task
+     * @return UserTask[]
+     */
+    public static function getAllForTask($task)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT * FROM `UserTask` WHERE `taskId` = :taskId ' .
+            'AND `deleted` = 0 ORDER BY `acceptedTimestamp` DESC',
+            array(
+                ':taskId'=>$task->getId()
+            ));
+
+        return self::populateMany($result);
+    }
+
+    /**
+     * @param Task $task
+     * @return int
+     */
+    public static function getCountForTask($task)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT COUNT(*) AS `subscribers` FROM `UserTask` WHERE `taskId` = :taskId ' .
+            'AND `deleted` = 0',
+            array(
+                ':taskId'=>$task->getId()
+            ));
+
+        return $result[0]['subscribers'];
+    }
+
+    /**
+     * @param User $user
      * @return UserTask[]|null
      */
     public static function getCurrentForUser($user)
@@ -200,7 +258,7 @@ class UserTask extends Root
             ->setTaskId($result['taskId'])
             ->setAcceptanceToken($result['acceptanceToken'])
             ->setAcceptedTimestamp($result['acceptedTimestamp'])
-            ->setCompletedTimestamp($result['acceptedTimestamp']);
+            ->setCompletedTimestamp($result['completedTimestamp']);
 
         return $obj;
     }
@@ -209,9 +267,9 @@ class UserTask extends Root
     {
         $mysql = MySql::instance();
 
-        $result = $mysql->query(
+        $mysql->query(
             'UPDATE `UserTask` SET `deleted` = :deleted, `completedTimestamp` = :completedTimestamp, `acceptedTimestamp` = :acceptedTimestamp, ' .
-            '`userId` = :userId, `taskId` = :taskId, `acceptanceToken` = :acceptanceToken' .
+            '`userId` = :userId, `taskId` = :taskId, `acceptanceToken` = :acceptanceToken ' .
             'WHERE `id` = :id',
             array(
                 ':deleted'=>$this->deleted,

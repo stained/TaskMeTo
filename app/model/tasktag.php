@@ -101,7 +101,7 @@ class TaskTag extends Root
 
     /**
      * @param Task $task
-     * @return static
+     * @return TaskTag[]
      */
     public static function getAllForTask($task)
     {
@@ -173,5 +173,9 @@ class TaskTag extends Root
         );
     }
 
+    protected function update()
+    {
+        throw new \Exception('update() not supported on TaskFile');
+    }
 
 }

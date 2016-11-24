@@ -67,8 +67,7 @@ class Task extends Root
      */
     public function getSubscriberCount()
     {
-        // TODO get actual subscription count
-        return 0;
+        return UserTask::getCountForTask($this);
     }
 
     /**
@@ -238,11 +237,12 @@ class Task extends Root
     }
 
     /**
+     * @string format
      * @return bool|string
      */
-    public function getFormattedDeadline()
+    public function getFormattedDeadline($format = "D, F j Y, H:i:s")
     {
-        return date("D, F j Y, H:i:s", $this->deadlineTimestamp);
+        return date($format, $this->deadlineTimestamp);
     }
 
     /**
@@ -265,6 +265,38 @@ class Task extends Root
 
         $result = $mysql->query('SELECT * FROM `Task` WHERE `createdByUserId` = :userId AND `deleted` = 0 ORDER BY `id` DESC',
             array(':userId'=>$user->getId()));
+
+        return self::populateMany($result);
+    }
+
+    /**
+     * @param User $user
+     * @return Task|null
+     */
+    public static function getCompletedForUser($user)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT t.* FROM `Task` t, `UserTask` ut WHERE ' .
+                                'ut.taskId = t.id AND `createdByUserId` = :userId AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
+                                'AND `completedTimestamp` > 0 ORDER BY `completedTimestamp` DESC',
+            array(':userId'=>$user->getId()));
+
+        return self::populateMany($result);
+    }
+
+    /**
+     * @param User $user
+     * @return Task|null
+     */
+    public static function getCurrentForUser($user)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT t.* FROM `Task` t, `UserTask` ut WHERE ' .
+                                'ut.taskId = t.id AND `createdByUserId` = :userId AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
+                                'AND `completedTimestamp` = 0 ORDER BY `acceptedTimestamp` DESC',
+                                array(':userId'=>$user->getId()));
 
         return self::populateMany($result);
     }

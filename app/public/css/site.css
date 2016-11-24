@@ -140,6 +140,33 @@ div.deadline_not_passed_indicator {
     background-color: #00ff00;
 }
 
+div.deadline_not_completed_indicator {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #880000;
+    width: 10px;
+    height: 10px;
+    background-color: #ff0000;
+}
+
+div.deadline_in_progress_indicator {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #888800;
+    width: 10px;
+    height: 10px;
+    background-color: #ffff00;
+}
+
+div.deadline_completed_indicator {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #008800;
+    width: 10px;
+    height: 10px;
+    background-color: #00ff00;
+}
+
 div.code {
     background: #cccac1;
     padding: 10px;

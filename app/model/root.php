@@ -50,6 +50,11 @@ abstract class Root
         return $this;
     }
 
+    public function delete()
+    {
+        $this->setDeleted(true)->update();
+    }
+
     /**
      * @param array $result
      * @return static
@@ -57,7 +62,7 @@ abstract class Root
     protected static function populateMany($result)
     {
         if (!$result) {
-            return null;
+            return array();
         }
 
         $many = [];
@@ -74,4 +79,5 @@ abstract class Root
     }
 
     protected abstract static function populateOne($result);
+    protected abstract function update();
 }

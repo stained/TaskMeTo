@@ -22,8 +22,10 @@ class Root
      */
     public static function beforeRoute($f3)
     {
+        // store current route
         $pieces = explode('?', $f3->get('URI'));
         $actualRoute = $pieces[0];
+
         $f3->set('route', $actualRoute);
 
         $loginToken = $f3->get('COOKIE.user_token');
@@ -33,7 +35,10 @@ class Root
             $f3->set('user', static::$user);
         }
 
-        if (in_array($actualRoute, static::$protectedRoutes)) {
+        // get pattern that matched
+        $pattern = $f3->get('PATTERN');
+
+        if (in_array($pattern, static::$protectedRoutes)) {
             if (!static::$user) {
                 $f3->set('error', 'Please login to view this page');
                 $f3->set('REQUEST.returnpath', $actualRoute);
