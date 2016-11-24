@@ -91,7 +91,7 @@ table {
     width: 100%;
 }
 
-tr:nth-child(even) {background: #cccac1}
+tr:nth-child(even) {background: #dddbd3}
 tr:nth-child(odd) {background: #eeece4}
 
 td {
@@ -168,7 +168,7 @@ div.deadline_completed_indicator {
 }
 
 div.code {
-    background: #cccac1;
+    background: #dddbd3;
     padding: 10px;
 }
 

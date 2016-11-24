@@ -53,6 +53,7 @@ class User extends Root
         $f3->set('completedTasks', $completedTasks);
         $f3->set('createdTasks', $createdTasks);
         $f3->set('username', $username);
+        $f3->set('points', UserTask::getCompletedCountForUser($user));
 
         static::render($f3, 'user/profile', array('nav'=>array('Home' => '/', $displayName=>'')));
     }

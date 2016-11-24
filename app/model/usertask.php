@@ -214,6 +214,23 @@ class UserTask extends Root
 
     /**
      * @param User $user
+     * @return int
+     */
+    public static function getCompletedCountForUser($user)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT COUNT(*) AS `completed` FROM `UserTask` WHERE `userId` = :userId ' .
+            'AND `deleted` = 0 AND completedTimestamp > 0',
+            array(
+                ':userId'=>$user->getId()
+            ));
+
+        return $result[0]['completed'];
+    }
+
+    /**
+     * @param User $user
      * @return UserTask[]|null
      */
     public static function getCurrentForUser($user)

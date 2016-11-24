@@ -5,7 +5,16 @@
 </check>
 
 <h1>{{ @username }}
-<div class="sub_header">(0 points)</div>
+<div class="sub_header">({{ @points }}
+    <check if="{{ @points == 1 }}">
+        <true>
+            point)
+        </true>
+        <false>
+            points)
+        </false>
+    </check>
+</div>
 </h1>
 <hr />
 
