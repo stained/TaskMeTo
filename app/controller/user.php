@@ -8,6 +8,7 @@ use Model\UserTask;
 class User extends Root
 {
     protected static $protectedRoutes = array(
+        '/user/profile/edit'
     );
 
     /**
@@ -56,6 +57,14 @@ class User extends Root
         $f3->set('points', UserTask::getCompletedCountForUser($user));
 
         static::render($f3, 'user/profile', array('nav'=>array('Home' => '/', $displayName=>'')));
+    }
+
+    public static function editProfile($f3)
+    {
+        static::render($f3, 'user/edit', array('nav'=>array('Home' => '/',
+                                                            static::$user->getUsername()=>'/user/profile/' . static::$user->getUsername(),
+                                                            'Edit' => ''
+        )));
     }
 
     /**
@@ -183,7 +192,7 @@ class User extends Root
         static::$user = $user;
 
         // generate login token
-        $loginToken = uniqid('u', true);
+        $loginToken = sha1(uniqid('u', true));
         $user->setLoginToken($loginToken)->update();
 
         $f3->set('COOKIE.user_token', $loginToken, 60 * 60 * 24 * 30);

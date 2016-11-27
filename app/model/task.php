@@ -47,6 +47,29 @@ class Task extends Root
     protected $published = false;
 
     /**
+     * @var string
+     */
+    protected $viewHash;
+
+    /**
+     * @param string $viewHash
+     * @return $this
+     */
+    public function setViewHash($viewHash)
+    {
+        $this->viewHash = $viewHash;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewHash()
+    {
+        return $this->viewHash;
+    }
+
+    /**
      * @return TaskTag
      */
     public function getTags()
@@ -278,7 +301,7 @@ class Task extends Root
         $mysql = MySql::instance();
 
         $result = $mysql->query('SELECT t.* FROM `Task` t, `UserTask` ut WHERE ' .
-                                'ut.taskId = t.id AND `createdByUserId` = :userId AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
+                                'ut.taskId = t.id AND `ut`.`deleted` = 0 AND `t`.`deleted` = 0 ' .
                                 'AND `completedTimestamp` > 0 ORDER BY `completedTimestamp` DESC',
             array(':userId'=>$user->getId()));
 
@@ -380,6 +403,20 @@ class Task extends Root
     }
 
     /**
+     * @param string $viewHash
+     * @return Task|null
+     */
+    public static function getByViewHash($viewHash)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT * FROM `Task` WHERE `viewHash` = :viewHash AND `deleted` = 0 LIMIT 1',
+            array(':viewHash'=>$viewHash));
+
+        return self::populateOne($result[0]);
+    }
+
+    /**
      * @param array $result
      * @return Task
      */
@@ -400,7 +437,8 @@ class Task extends Root
             ->setInstructions($result['instructions'])
             ->setRequirements($result['requirements'])
             ->setDeadlineTimestamp($result['deadlineTimestamp'])
-            ->setPublished($result['published']);
+            ->setPublished($result['published'])
+            ->setViewHash($result['viewHash']);
 
         return $obj;
     }
@@ -417,7 +455,7 @@ class Task extends Root
         $result = $mysql->query(
             'UPDATE `Task` SET `deleted` = :deleted, `createdTimestamp` = :createdTimestamp, `updatedTimestamp` = :updatedTimestamp, ' .
             '`createdByUserId` = :createdByUserId, `title` = :title, `instructions` = :instructions, `requirements` = :requirements, ' .
-            '`deadlineTimestamp` = :deadlineTimestamp, `published` = :published ' .
+            '`deadlineTimestamp` = :deadlineTimestamp, `published` = :published, `viewHash` = :viewHash ' .
             'WHERE `id` = :id',
             array(
                 ':deleted'=>$this->deleted,
@@ -429,6 +467,7 @@ class Task extends Root
                 ':requirements'=>$this->requirements,
                 ':deadlineTimestamp'=>$this->deadlineTimestamp,
                 ':published'=>$this->published,
+                ':viewHash'=>$this->viewHash,
                 ':id'=>$this->id
             )
         );
@@ -455,6 +494,7 @@ class Task extends Root
             ->setCreatedByUser($createdByUser)
             ->setTitle($title)
             ->setInstructions($instructions)
+            ->setViewHash(sha1(uniqid('vh', true)))
             ->insert();
 
         return $obj;
@@ -465,8 +505,8 @@ class Task extends Root
         $mysql = MySql::instance();
 
         $result = $mysql->query(array(
-            'INSERT INTO `Task` (`deleted`, `createdTimestamp`, `updatedTimestamp`, `title`, `createdByUserId`, `published`, `instructions`) ' .
-            'VALUES (0, :createdTimestamp, :updatedTimestamp, :title, :createdByUserId, 0, :instructions)',
+            'INSERT INTO `Task` (`deleted`, `createdTimestamp`, `updatedTimestamp`, `title`, `createdByUserId`, `published`, `instructions`,`viewHash`) ' .
+            'VALUES (0, :createdTimestamp, :updatedTimestamp, :title, :createdByUserId, 0, :instructions, :viewHash)',
             'SELECT LAST_INSERT_ID() AS id'
         ),
             array(
@@ -475,7 +515,8 @@ class Task extends Root
                     ':updatedTimestamp'=>$this->updatedTimestamp,
                     ':title'=>$this->title,
                     ':instructions'=>$this->instructions,
-                    ':createdByUserId'=>$this->createdByUserId
+                    ':createdByUserId'=>$this->createdByUserId,
+                    ':viewHash'=>$this->viewHash
                 ),
                 array()
             )

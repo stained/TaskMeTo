@@ -274,4 +274,19 @@ class File extends Root
 
         $this->id = $result[0]['id'];
     }
+
+    public function delete()
+    {
+        // remove file
+        $path = $this->getPath();
+        unlink($path);
+
+        $mysql = MySql::instance();
+
+        $mysql->query('DELETE FROM `File` WHERE `id` = :id',
+            array(
+                ':id'=>$this->id
+            )
+        );
+    }
 }

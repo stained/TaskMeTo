@@ -42,7 +42,7 @@
         <check if="{{ @task->isPublished() || @isOwner }}">
         <tr>
             <td>
-                <a href="/task/view/{{ @task->getId() }}">{{ @task->getTitle() }}</a>
+                <a href="/task/view/{{ @task->getViewHash() }}">{{ @task->getTitle() }}</a>
             </td>
             <td class="align_left_fit">
                 <repeat group="{{ @task->getTags() }}" key="{{ @key }}" value="{{ @tag }}">
@@ -67,10 +67,10 @@
                 <td class="align_right_fit">
                     <check if="{{ @task->isPublished() }}">
                         <false>
-                            <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+                            <a href="/task/publish/{{ @task->getId() }}">Make Public</a>
                         </false>
                         <true>
-                            <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+                            <a href="/task/unpublish/{{ @task->getId() }}">Make Private</a>
                         </true>
                     </check> |
                     <a href="/task/edit/{{ @task->getId() }}">Edit</a> |

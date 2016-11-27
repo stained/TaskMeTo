@@ -4,6 +4,8 @@ namespace Controller;
 
 use Model\File;
 use Model\TaskFile;
+use Model\TaskResponse;
+use Model\TaskResponseFile;
 use Model\TaskTag;
 use Model\UserTask;
 
@@ -16,7 +18,10 @@ class Task extends Root
         '/task/edit/@id',
         '/task/subscribe/@id',
         '/task/unsubscribe/@id',
-        '/task/edit/@id/remove/@fileId'
+        '/task/edit/@id/remove/@fileId',
+        '/task/complete/@userTaskId',
+        '/task/respond',
+        '/task/response/delete/@taskResponseId'
     );
 
     /**
@@ -123,9 +128,9 @@ class Task extends Root
      */
     public static function viewTask($f3)
     {
-        $taskId = $f3->get('PARAMS.id');
+        $viewHash = $f3->get('PARAMS.viewHash');
 
-        $task = \Model\Task::getById($taskId);
+        $task = \Model\Task::getByViewHash($viewHash);
 
         if (!$task) {
             parent::fourOhFour($f3);
@@ -151,6 +156,7 @@ class Task extends Root
 
         $f3->set('tags', $task->getTags());
         $f3->set('files', $task->getFiles());
+        $f3->set('responses', TaskResponse::getAllForTask($task));
 
         static::render($f3, 'task/view', array('nav'=>$nav));
     }
@@ -189,7 +195,7 @@ class Task extends Root
      */
     public static function updateTask($f3)
     {
-        $taskId = $f3->get('PARAMS.id');
+        $taskId = $f3->get('POST.id');
 
         $task = \Model\Task::getById($taskId);
         self::validateOwner($f3, $task);
@@ -284,8 +290,8 @@ class Task extends Root
             parent::fourOhThree($f3);
         }
 
-        $file->delete();
         $taskFile->delete();
+        $file->delete();
 
         $f3->set('message', "File \"{$file->getOriginalFilename()}\" successfully removed");
 
@@ -308,6 +314,7 @@ class Task extends Root
         if (!empty($taskFiles)) {
             foreach ($taskFiles as $taskFile) {
                 $file = $taskFile->getFile();
+                $taskFile->delete();
 
                 if ($file) {
                     $file->delete();
@@ -316,7 +323,6 @@ class Task extends Root
         }
 
         TaskTag::deleteForTask($task);
-        TaskFile::deleteForTask($task);
 
         $task->delete();
 
@@ -389,7 +395,7 @@ class Task extends Root
             }
             else {
                 // subscribe!
-                $userTask = UserTask::create(static::$user, $task, uniqid('ut', true));
+                $userTask = UserTask::create(static::$user, $task, sha1(uniqid('ut', true)));
                 $userTask->setAcceptedTimestamp(time())->update();
                 $f3->set('message', "You have successfully subscribed to \"{$task->getTitle()}\"");
             }
@@ -429,6 +435,128 @@ class Task extends Root
         }
 
         static::viewTask($f3);
+    }
+
+    /**
+     * @param \Base $f3
+     */
+    public static function markComplete($f3)
+    {
+        $userTaskId = $f3->get('PARAMS.userTaskId');
+
+        $userTask = \Model\UserTask::getById($userTaskId);
+
+        if (!$userTask) {
+            parent::fourOhFour($f3);
+        }
+
+        $task = $userTask->getTask();
+
+        self::validateOwner($f3, $task);
+
+        $user = $userTask->getUser();
+
+        if ($userTask->isComplete()) {
+            $f3->set('message', "You have already marked the task complete for \"{$user->getUsername()}\"");
+        }
+        else {
+            $userTask->setCompletedTimestamp(time())->update();
+            $f3->set('message', "Task marked as complete for \"{$user->getUsername()}\"");
+        }
+
+        $f3->set('PARAMS.viewHash', $task->getViewHash());
+        self::viewTask($f3);
+    }
+
+    /**
+     * @param \Base $f3
+     */
+    public static function respond($f3)
+    {
+        $post = $f3->get('POST');
+
+        if (!$post) {
+            parent::fourOhFour($f3);
+        }
+
+        $taskId = $post['id'] ? $post['id'] : 0;
+
+        $task = \Model\Task::getById($taskId);
+
+        if (!$task) {
+            parent::fourOhFour($f3);
+        }
+
+        $userTask = UserTask::getForUserAndTask(static::$user, $task);
+
+        if (!$userTask) {
+            // not allowed to create a response on a task you're not subscribed to
+            parent::fourOhThree($f3);
+        }
+
+        $response = $post['response'] ? $post['response'] : '';
+
+        $files = static::handleFileUpload($f3, true);
+
+        $f3->set('PARAMS.viewHash', $task->getViewHash());
+
+        if (!$response && !$files) {
+            $f3->set('error', "Please enter a response OR upload a response file");
+            self::viewTask($f3);
+        }
+
+        // create response :D
+        $taskResponse = TaskResponse::create($userTask->getUser(), $task, $userTask, $response);
+
+        if ($files) {
+            foreach ($files as $file) {
+                TaskResponseFile::create($taskResponse, $file);
+            }
+        }
+
+        $f3->set('POST', null);
+        $f3->set('message', "Thank you for your response!");
+        $f3->reroute('/task/view/' . $task->getViewHash());
+    }
+
+    /**
+     * @param \Base $f3
+     */
+    public static function deleteResponse($f3)
+    {
+        $taskResponseId = $f3->get('PARAMS.taskResponseId');
+
+        $taskResponse = \Model\TaskResponse::getById($taskResponseId);
+
+        if (!$taskResponse) {
+            parent::fourOhFour($f3);
+        }
+
+        $task = $taskResponse->getTask();
+        $user = $taskResponse->getUser();
+
+        if ($task->getCreatedByUserId() != static::$user->getId() && $user->getId() != static::$user->getId()) {
+            parent::fourOhThree($f3);
+        }
+
+        // delete task
+
+        // get files
+        $taskResponseFiles = $taskResponse->getFiles();
+
+        if ($taskResponseFiles) {
+            foreach ($taskResponseFiles as $taskFile) {
+                $file = $taskFile->getFile();
+                $taskFile->delete();
+
+                if ($file) {
+                    $file->delete();
+                }
+            }
+        }
+
+        $taskResponse->delete();
+        $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
     /**

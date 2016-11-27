@@ -159,7 +159,7 @@ class Root
                     );
 
                     // rename
-                    $newFilePath = $f3->get('paths.file_upload_path') . uniqid('f' . $file->getId() . '_', true)  . '.' . $extension;
+                    $newFilePath = $f3->get('paths.file_upload_path') . sha1(uniqid('f' . $file->getId() . '_', true))  . '.' . $extension;
 
                     if(rename($filePath, $newFilePath)) {
                         // if move succeeded update file

@@ -2,12 +2,12 @@
     <check if="{{ @user }}">
         <false><a href="/user/signin?returnpath=/tasks">Sign in</a> to create new, or view existing tasks.</false>
         <true>
-            Open Tasks | <a href="/task/create">Create New Task</a> | <a href="/tasks/view">Your Tasks</a>
+            Open Public Tasks | <a href="/task/create">Create New Task</a> | <a href="/tasks/view">Your Tasks</a>
         </true>
     </check>
 </div>
 
-<h1>Open Tasks
+<h1>Open Public Tasks
     <check if="{{ @REQUEST.tag }}">
         <div class="sub_header">tagged <a href="/tasks?tag={{ @REQUEST.tag }}">{{ @REQUEST.tag }}</a></div>
     </check>

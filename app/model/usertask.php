@@ -160,6 +160,20 @@ class UserTask extends Root
     }
 
     /**
+     * @param int $id
+     * @return UserTask|null
+     */
+    public static function getById($id)
+    {
+        $mysql = MySql::instance();
+
+        $result = $mysql->query('SELECT * FROM `UserTask` WHERE `id` = :id AND `deleted` = 0 LIMIT 1',
+            array(':id'=>$id));
+
+        return self::populateOne($result[0]);
+    }
+
+    /**
      * @param User $user
      * @param Task $task
      * @return UserTask|null

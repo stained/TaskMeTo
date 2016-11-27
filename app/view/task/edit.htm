@@ -1,10 +1,10 @@
 <div class="sub_nav_bar">
     <check if="{{ @task->isPublished() }}">
         <false>
-            <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+            <a href="/task/publish/{{ @task->getId() }}">Make Public</a>
         </false>
         <true>
-            <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+            <a href="/task/unpublish/{{ @task->getId() }}">Make Private</a>
         </true>
     </check> |
     Edit |
@@ -14,7 +14,8 @@
 <h1>Editing {{ @task->getTitle() }}</h1>
 
 <div class="code">
-    <form method="POST" action="/task/update/{{ @task->getId() }}" enctype="multipart/form-data">
+    <form method="POST" action="/task/update" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{{ @task->getId() }}" />
         <p>
             <label for="title">Title: <span class="required">*</span></label><br /><input type="text" id="title" name="title" value="{{ @task->getTitle() }}" placeholder="e.g. My Awesome Task" />
         </p>

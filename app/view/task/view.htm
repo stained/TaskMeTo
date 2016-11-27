@@ -2,10 +2,10 @@
     <div class="sub_nav_bar">
         <check if="{{ @task->isPublished() }}">
             <false>
-                <a href="/task/publish/{{ @task->getId() }}">Publish</a>
+                <a href="/task/publish/{{ @task->getId() }}">Make Public</a>
             </false>
             <true>
-                <a href="/task/unpublish/{{ @task->getId() }}">Unpublish</a>
+                <a href="/task/unpublish/{{ @task->getId() }}">Make Private</a>
             </true>
         </check> |
         <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
@@ -38,29 +38,30 @@
     {{ @task->getFormattedDeadline() }}
 </div>
 
-<check if="{{ @tags }}">
-    <h2>Tags</h2>
-    <div class="code">
-        <repeat group="{{ @tags }}" key="{{ @key }}" value="{{ @tag }}">
-            <a href="/tasks?tag={{ @tag->getTag() }}">{{ @tag->getTag() }}</a>&nbsp;
-        </repeat>
-    </div>
-</check>
-
 <check if="{{ @files }}">
     <h2>Files</h2>
     <div class="code">
         <repeat group="{{ @files }}" key="{{ @key }}" value="{{ @taskFile }}">
             <p>
-                <a href="/file/{{ @taskFile->getFile()->getId() }}" target="_blank">
-                    <check if="{{ @taskFile->getFile()->isImage() }}">
-                        <img src="/file/{{ @taskFile->getFile()->getId() }}?w=100" class="task_image_icon" /><br />
+                <set taskActualFile="{{ @taskFile->getFile() }}" />
+                <a href="/file/{{ @taskActualFile->getId() }}" target="_blank">
+                    <check if="{{ @taskActualFile->isImage() }}">
+                        <img src="/file/{{ @taskActualFile->getId() }}?w=100" class="task_image_icon" /><br />
                     </check>
-                    <check if="{{ @taskFile->getFile()->isDocument() }}">
+                    <check if="{{ @taskActualFile->isDocument() }}">
                     </check>
-                    {{ @taskFile->getFile()->getOriginalFilename() }}
+                    {{ @taskActualFile->getOriginalFilename() }}
                 </a>
             </p>
+        </repeat>
+    </div>
+</check>
+
+<check if="{{ @tags }}">
+    <h2>Tags</h2>
+    <div class="code">
+        <repeat group="{{ @tags }}" key="{{ @key }}" value="{{ @tag }}">
+            <a href="/tasks?tag={{ @tag->getTag() }}">{{ @tag->getTag() }}</a>&nbsp;
         </repeat>
     </div>
 </check>
@@ -71,6 +72,7 @@
     <div class="code">
         <repeat group="{{ @subscribers }}" key="{{ @key }}" value="{{ @userTask }}">
             <set username="{{ @userTask->getUser()->getUsername() }}" />
+            <set allowComplete='0' />
             <check if="{{ @userTask->getCompletedTimestamp() > 0 }}">
                 <true>
                     <div class="deadline_completed_indicator"></div>
@@ -82,11 +84,16 @@
                         </true>
                         <false>
                             <div class="deadline_in_progress_indicator"></div>
+                            <set allowComplete='1' />
                         </false>
                     </check>
                 </false>
             </check>
             <a href="/user/profile/{{ @username }}">{{ @username  }}</a>
+
+            <check if="{{ @isOwner && @allowComplete }}">
+                <a href="/task/complete/{{ @userTask->getId() }}">[Complete]</a>
+            </check>
            &nbsp;
         </repeat>
     </div>
@@ -119,4 +126,76 @@
 <check if="{{ @user && @subscribedToTask }}">
     <hr >
     <h1>Responses</h1>
+    <check if="{{ @responses }}">
+        <true>
+            <repeat group="{{ @responses }}" key="{{ @key }}" value="{{ @response }}">
+                <set username="{{ @response->getUser()->getUsername() }}" />
+                <h3>
+                    {{ @username }}
+                    <div class="sub_header">{{ @response->getFormattedCreateDate() }}</div>
+                </h3>
+
+                <p>
+                    {{ @response->getResponse() }}
+                </p>
+
+                <set files="{{ @response->getFiles() }}" />
+
+                <check if="{{ @files }}">
+                        <div class="code">
+                        <repeat group="{{ @files }}" key="{{ @key }}" value="{{ @responseFile }}">
+                            <p>
+                                <set responseActualFile="{{ @responseFile->getFile() }}" />
+                                <a href="/file/{{ @responseActualFile->getId() }}" target="_blank">
+                                    <check if="{{ @responseActualFile->isImage() }}">
+                                        <img src="/file/{{ @responseActualFile->getId() }}?w=100" class="task_image_icon" /><br />
+                                    </check>
+                                    <check if="{{ @responseActualFile->isDocument() }}">
+                                    </check>
+                                    {{ @responseActualFile->getOriginalFilename() }}
+                                </a>
+                            </p>
+                        </repeat>
+                    </div>
+                </check>
+
+                <set userTask="{{ @response->getUserTask() }}" />
+
+                <p>
+                <check if="{{ @isOwner &&  !@userTask->isComplete() }}">
+                    <a href="/task/complete/{{ @userTask->getId() }}">Mark Complete</a> |
+               </check>
+
+                <check if="{{ @isOwner || (@user && @user->getId() == @response->getUser()->getId()) }}">
+                    <true>
+                        <a href="/task/response/delete/{{ @response->getId() }}">Delete</a>
+                    </true>
+                </check>
+                </p>
+            </repeat>
+        </true>
+        <false>
+            Nobody has responded to this task yet.
+        </false>
+    </check>
+    <h2>Create a response</h2>
+
+    <div class="code">
+        <form method="POST" action="/task/respond" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{ @task->getId() }}" />
+            <p>
+                <label for="response">Response: </label><br /><textarea id="response" name="response" placeholder="e.g. Here's my response...">{{ @POST.response }}</textarea>
+            </p>
+            <p>
+                <label for="file1">Files: </label><br />
+                <input type="file" id="file1" name="file1" /><br />
+                <input type="file" id="file2" name="file2" /><br />
+                <input type="file" id="file3" name="file3" /><br />
+                <span class="hint">Upload up to 3 files in response</span>
+            </p>
+
+            <input type="submit" value="Respond" />
+        </form>
+    </div>
 </check>
+<br />
