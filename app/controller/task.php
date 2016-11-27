@@ -261,9 +261,8 @@ class Task extends Root
             }
         }
 
-        $f3->set('message', "Task \"{$task->getTitle()}\" successfully updated");
-
-        self::editTask($f3);
+        static::alert('message', "Task \"{$task->getTitle()}\" successfully updated");
+        $f3->reroute('/task/edit/' . $task->getId());
     }
 
     /**
@@ -293,9 +292,8 @@ class Task extends Root
         $taskFile->delete();
         $file->delete();
 
-        $f3->set('message', "File \"{$file->getOriginalFilename()}\" successfully removed");
-
-        self::editTask($f3);
+        static::alert('message', "File \"{$file->getOriginalFilename()}\" successfully removed");
+        $f3->reroute('/task/edit/' . $task->getId());
     }
 
     /**
@@ -311,12 +309,15 @@ class Task extends Root
         // get files
         $taskFiles = TaskFile::getAllForTask($task);
 
-        if (!empty($taskFiles)) {
-            foreach ($taskFiles as $taskFile) {
+        if (!empty($taskFiles))
+        {
+            foreach ($taskFiles as $taskFile)
+            {
                 $file = $taskFile->getFile();
                 $taskFile->delete();
 
-                if ($file) {
+                if ($file)
+                {
                     $file->delete();
                 }
             }
@@ -326,9 +327,9 @@ class Task extends Root
 
         $task->delete();
 
-        $f3->set('message', "Task \"{$task->getTitle()}\" successfully deleted");
 
-        static::viewYours($f3);
+        static::alert('message', "Task \"{$task->getTitle()}\" successfully deleted");
+        $f3->reroute('/tasks/view');
     }
 
     /**
@@ -343,9 +344,8 @@ class Task extends Root
 
         $task->setPublished(true)->update();
 
-        $f3->set('message', "Task \"{$task->getTitle()}\" successfully published");
-
-        static::viewYours($f3);
+        static::alert('message', "Task \"{$task->getTitle()}\" successfully published");
+        $f3->reroute('/tasks/view');
     }
 
     /**
@@ -360,9 +360,8 @@ class Task extends Root
 
         $task->setPublished(false)->update();
 
-        $f3->set('message', "Task \"{$task->getTitle()}\" successfully unpublished");
-
-        static::viewYours($f3);
+        static::alert('message', "Task \"{$task->getTitle()}\" successfully unpublished");
+        $f3->reroute('/tasks/view');
     }
 
     /**
@@ -383,25 +382,25 @@ class Task extends Root
 
         if ($userTask) {
             if ($userTask->isComplete()) {
-                $f3->set('message', "You have already completed \"{$task->getTitle()}\"");
+                static::alert('message', "You have already completed \"{$task->getTitle()}\"");
             }
             else {
-                $f3->set('message', "You are already subscribed to \"{$task->getTitle()}\"");
+                static::alert('message', "You are already subscribed to \"{$task->getTitle()}\"");
             }
         }
         else {
             if ($task->hasDeadlinePassed()) {
-                $f3->set('error', "Due date has passed, so you can no longer subscribe to this task");
+                static::alert('error', "Due date has passed, so you can no longer subscribe to this task");
             }
             else {
                 // subscribe!
                 $userTask = UserTask::create(static::$user, $task, sha1(uniqid('ut', true)));
                 $userTask->setAcceptedTimestamp(time())->update();
-                $f3->set('message', "You have successfully subscribed to \"{$task->getTitle()}\"");
+                static::alert('message', "You have successfully subscribed to \"{$task->getTitle()}\"");
             }
         }
 
-        static::viewTask($f3);
+        $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
     /**
@@ -421,20 +420,20 @@ class Task extends Root
         $userTask = UserTask::getForUserAndTask(static::$user, $task);
 
         if (!$userTask) {
-            $f3->set('error', "You are not currently subscribed to \"{$task->getTitle()}\"");
+            static::alert('error', "You are not currently subscribed to \"{$task->getTitle()}\"");
         }
         else {
             if ($userTask->isComplete()) {
-                $f3->set('message', "You have already completed \"{$task->getTitle()}\"");
+                static::alert('message', "You have already completed \"{$task->getTitle()}\"");
             }
             else {
                 // un subscribe!
                 $userTask->delete();
-                $f3->set('message', "You have successfully unsubscribed from \"{$task->getTitle()}\"");
+                static::alert('message', "You have successfully unsubscribed from \"{$task->getTitle()}\"");
             }
         }
 
-        static::viewTask($f3);
+        $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
     /**
@@ -457,15 +456,14 @@ class Task extends Root
         $user = $userTask->getUser();
 
         if ($userTask->isComplete()) {
-            $f3->set('message', "You have already marked the task complete for \"{$user->getUsername()}\"");
+            static::alert('message', "You have already marked the task complete for \"{$user->getUsername()}\"");
         }
         else {
             $userTask->setCompletedTimestamp(time())->update();
-            $f3->set('message', "Task marked as complete for \"{$user->getUsername()}\"");
+            static::alert('message', "Task marked as complete for \"{$user->getUsername()}\"");
         }
 
-        $f3->set('PARAMS.viewHash', $task->getViewHash());
-        self::viewTask($f3);
+        $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
     /**
@@ -501,8 +499,8 @@ class Task extends Root
         $f3->set('PARAMS.viewHash', $task->getViewHash());
 
         if (!$response && !$files) {
-            $f3->set('error', "Please enter a response OR upload a response file");
-            self::viewTask($f3);
+            static::alert('error', "Please enter a response OR upload a response file");
+            $f3->reroute('/task/view/' . $task->getViewHash());
         }
 
         // create response :D
@@ -514,8 +512,7 @@ class Task extends Root
             }
         }
 
-        $f3->set('POST', null);
-        $f3->set('message', "Thank you for your response!");
+        static::alert('message', "Thank you for your response!");
         $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
@@ -556,6 +553,7 @@ class Task extends Root
         }
 
         $taskResponse->delete();
+        static::alert('message', "Response successfully deleted");
         $f3->reroute('/task/view/' . $task->getViewHash());
     }
 

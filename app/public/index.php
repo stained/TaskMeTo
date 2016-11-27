@@ -15,8 +15,12 @@ $f3->config('../config/config.ini');
 $f3->config('../config/mysql.ini');
 $f3->config('../config/routes.ini');
 $f3->config('../config/paths.ini');
+$f3->config('../config/cache.ini');
 
 $f3->set('ONERROR', '\Controller\Root::error');
+
+$cacheConfig = $f3->get('cache.config');
+$f3->set('CACHE', $cacheConfig);
 
 if ((float)PCRE_VERSION<7.9)
 	trigger_error('PCRE version is out of date');

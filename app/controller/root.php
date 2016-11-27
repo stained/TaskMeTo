@@ -45,6 +45,19 @@ class Root
                 \Controller\User::signIn($f3);
             }
         }
+
+        $cache = \Cache::instance();
+
+        // check for message
+        $alertMessage = $cache->get('ALERT');
+
+        if ($alertMessage) {
+            // get alert and only show it once
+            $type = $alertMessage['type'];
+            $message = $alertMessage['message'];
+            $f3->set($type, $message);
+            $cache->clear('ALERT');
+        }
     }
 
     /**
@@ -172,6 +185,16 @@ class Root
         }
 
         return $fileObjects;
+    }
+
+    /**
+     * @param string $type message or error
+     * @param string $message
+     */
+    protected static function alert($type = 'message', $message)
+    {
+        $cache = \Cache::instance();
+        $cache->set('ALERT', array('type'=>$type, 'message'=>$message), 60);
     }
 
     /**
