@@ -1,11 +1,9 @@
+<set showToolbar = '0' />
 <repeat group="{{ @tasks }}" key="{{ @key }}" value="{{ @task }}">
     <check if="{{ @user && @user->getId() == @task->getCreatedByUserId() }}">
         <true>
-            <set isOwner = '1' />
+            <set showToolbar = '1' />
         </true>
-        <false>
-            <set isOwner = '0' />
-        </false>
     </check>
 </repeat>
 
@@ -23,7 +21,7 @@
         <th>
             Subscribers
         </th>
-        <check if="{{ @isOwner }}">
+        <check if="{{ @showToolbar }}">
             <th>
                 Tools
             </th>
@@ -64,18 +62,27 @@
                 {{ @task->getSubscriberCount() }}
             </td>
             <check if="{{ @isOwner }}">
-                <td class="align_right_fit">
-                    <check if="{{ @task->isPublished() }}">
-                        <false>
-                            <a href="/task/publish/{{ @task->getId() }}">Make Public</a>
-                        </false>
-                        <true>
-                            <a href="/task/unpublish/{{ @task->getId() }}">Make Private</a>
-                        </true>
-                    </check> |
-                    <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
-                    <a href="/task/delete/{{ @task->getId() }}">Delete</a>
-                </td>
+                <true>
+                    <td class="align_right_fit">
+                        <check if="{{ @task->isPublished() }}">
+                            <false>
+                                <a href="/task/publish/{{ @task->getId() }}">Make Public</a>
+                            </false>
+                            <true>
+                                <a href="/task/unpublish/{{ @task->getId() }}">Make Private</a>
+                            </true>
+                        </check> |
+                        <a href="/task/edit/{{ @task->getId() }}">Edit</a> |
+                        <a href="/task/delete/{{ @task->getId() }}">Delete</a>
+                    </td>
+                </true>
+                <false>
+                    <check if="{{ @showToolbar }}">
+                        <td class="align_right_fit">
+                            N/A
+                        </td>
+                    </check>
+                </false>
             </check>
         </tr>
         </check>

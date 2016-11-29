@@ -54,5 +54,4 @@ class Str
 
         return date('F Y', $timestamp);
     }
-
 }
