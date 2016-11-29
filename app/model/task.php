@@ -3,6 +3,7 @@
 namespace Model;
 
 use Util\MySql;
+use Util\Str;
 
 class Task extends Root
 {
@@ -266,6 +267,14 @@ class Task extends Root
     public function getFormattedDeadline($format = "D, F j Y, H:i:s")
     {
         return date($format, $this->deadlineTimestamp);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrettifiedDeadline()
+    {
+        return Str::timeToString($this->deadlineTimestamp);
     }
 
     /**

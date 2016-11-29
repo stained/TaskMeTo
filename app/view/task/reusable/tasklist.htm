@@ -58,7 +58,7 @@
                         <div class="deadline_not_passed_indicator"></div>
                     </false>
                 </check>
-                {{ @task->getFormattedDeadline() }}
+                {{ @task->getPrettifiedDeadline() }}
             </td>
             <td class="align_center_fit">
                 {{ @task->getSubscriberCount() }}

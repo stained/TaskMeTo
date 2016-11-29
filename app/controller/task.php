@@ -8,6 +8,7 @@ use Model\TaskResponse;
 use Model\TaskResponseFile;
 use Model\TaskTag;
 use Model\UserTask;
+use Util\Arr;
 
 class Task extends Root
 {
@@ -23,6 +24,8 @@ class Task extends Root
         '/task/respond',
         '/task/response/delete/@taskResponseId'
     );
+
+    protected static $allowedTags = '<p><br><b><i><u><li><ul>';
 
     /**
      * @param \Base $f3
@@ -56,9 +59,9 @@ class Task extends Root
 
         $files = static::handleFileUpload($f3, true);
 
-        $title = strip_tags($post['title'] ? $post['title'] : '');
-        $instructions = strip_tags($post['instructions'] ? $post['instructions'] : '', '<p><br><b><i><u>');
-        $deadline = $post['deadline'] ? $post['deadline'] : '';
+        $title = strip_tags(Arr::get($post, 'title', ''));
+        $instructions = strip_tags(Arr::get($post, 'instructions', ''), static::$allowedTags);
+        $deadline = Arr::get($post, 'deadline', '');
 
         if (!$title || !$instructions || !$deadline) {
             static::render($f3, 'task/create', array('nav'=>$nav,
@@ -66,7 +69,7 @@ class Task extends Root
             ));
         }
 
-        $requirements = strip_tags($post['requirements'] ? $post['requirements'] : '', '<p><br><b><i><u><li><ul>');
+        $requirements = strip_tags(Arr::get($post, 'requirements', ''), static::$allowedTags);
 
         $format = "Y/m/d H:i:s";
         $deadlineDate = \DateTime::createFromFormat($format, $deadline);
@@ -82,7 +85,7 @@ class Task extends Root
              ->setDeadlineTimestamp($deadlineDate->getTimestamp())->update();
 
         // check for tags
-        $tags = explode(',', strip_tags($post['tags'] ? $post['tags'] : ''));
+        $tags = explode(',', strip_tags(Arr::get($post, 'tags', ''), static::$allowedTags));
 
         if ($tags) {
             foreach ($tags as $tag) {
@@ -101,7 +104,7 @@ class Task extends Root
             }
         }
 
-        $f3->reroute('/task/view/' . $task->getId());
+        $f3->reroute('/task/view/' . $task->getViewHash());
     }
 
 
@@ -212,9 +215,9 @@ class Task extends Root
 
         $files = static::handleFileUpload($f3, true);
 
-        $title = strip_tags($post['title'] ? $post['title'] : '');
-        $instructions = strip_tags($post['instructions'] ? $post['instructions'] : '', '<p><br><b><i><u>');
-        $deadline = $post['deadline'] ? $post['deadline'] : '';
+        $title = strip_tags(Arr::get($post, 'title', ''));
+        $instructions = strip_tags(Arr::get($post, 'instructions', ''), static::$allowedTags);
+        $deadline = Arr::get($post, 'deadline', '');
 
         if (!$title || !$instructions || !$deadline) {
             static::render($f3, 'task/edit', array('nav'=>$nav,
@@ -222,7 +225,7 @@ class Task extends Root
             ));
         }
 
-        $requirements = strip_tags($post['requirements'] ? $post['requirements'] : '', '<p><br><b><i><u><li><ul>');
+        $requirements = strip_tags(Arr::get($post, 'requirements', ''), static::$allowedTags);
 
         $format = "Y/m/d H:i:s";
         $deadlineDate = \DateTime::createFromFormat($format, $deadline);
@@ -242,7 +245,7 @@ class Task extends Root
         TaskTag::deleteForTask($task);
 
         // check for tags
-        $tags = explode(',', strip_tags($post['tags'] ? $post['tags'] : ''));
+        $tags = explode(',', strip_tags(Arr::get($post, 'tags', ''), static::$allowedTags));
 
         if ($tags) {
             foreach ($tags as $tag) {
@@ -477,8 +480,7 @@ class Task extends Root
             parent::fourOhFour($f3);
         }
 
-        $taskId = $post['id'] ? $post['id'] : 0;
-
+        $taskId = Arr::get($post, 'id', 0);
         $task = \Model\Task::getById($taskId);
 
         if (!$task) {
@@ -492,7 +494,7 @@ class Task extends Root
             parent::fourOhThree($f3);
         }
 
-        $response = $post['response'] ? $post['response'] : '';
+        $response = Arr::get($post, 'response', '');
 
         $files = static::handleFileUpload($f3, true);
 
@@ -535,8 +537,6 @@ class Task extends Root
         if ($task->getCreatedByUserId() != static::$user->getId() && $user->getId() != static::$user->getId()) {
             parent::fourOhThree($f3);
         }
-
-        // delete task
 
         // get files
         $taskResponseFiles = $taskResponse->getFiles();

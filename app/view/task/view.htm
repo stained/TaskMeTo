@@ -131,7 +131,7 @@
                 <set username="{{ @response->getUser()->getUsername() }}" />
                 <h3>
                     {{ @username }}
-                    <div class="sub_header">{{ @response->getFormattedCreateDate() }}</div>
+                    <div class="sub_header">{{ @response->getPrettifiedCreateDate() }}</div>
                 </h3>
 
                 <p>

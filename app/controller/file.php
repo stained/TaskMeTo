@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use Util\Arr;
+
 class File extends Root
 {
     /**
@@ -22,8 +24,8 @@ class File extends Root
 
         $path = $file->getPath();
 
-        $width = $f3->get('GET.w');
-        $crop = $f3->get('GET.c') ? $f3->get('GET.c') : false;
+        $width = Arr::get($f3->get('GET'), 'w');
+        $crop = Arr::get($f3->get('GET'), 'c', false);
 
         if ($file->isImage() && $width) {
             $path = self::resizeImageFile($file, $width, $crop);

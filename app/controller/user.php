@@ -4,6 +4,7 @@ namespace Controller;
 
 use Model\Task;
 use Model\UserTask;
+use Util\Arr;
 
 class User extends Root
 {
@@ -120,7 +121,7 @@ class User extends Root
             static::render($f3, $template, array('nav'=>$nav));
         }
 
-        $username = strip_tags(trim($post['username'] ? $post['username'] : ''));
+        $username = strip_tags(trim(Arr::get($post, 'username', '')));
         $password = $post['password'];
         $email = $post['email'];
 

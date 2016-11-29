@@ -3,6 +3,7 @@
 namespace Model;
 
 use Util\MySql;
+use Util\Str;
 
 class TaskResponse extends Root
 {
@@ -184,6 +185,14 @@ class TaskResponse extends Root
     public function getFormattedCreateDate($format = "D, F j Y, H:i:s e")
     {
         return date($format, $this->createdTimestamp);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrettifiedCreateDate()
+    {
+        return Str::timeToString($this->createdTimestamp);
     }
 
     /**
