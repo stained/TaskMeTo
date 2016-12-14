@@ -78,6 +78,10 @@ abstract class Root
         return $many;
     }
 
-    protected abstract static function populateOne($result);
+    protected static function populateOne($result)
+    {
+
+    }
+
     protected abstract function update();
 }
